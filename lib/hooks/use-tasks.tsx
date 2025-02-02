@@ -1,4 +1,4 @@
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import {useCopilotAction, useCopilotChat, useCopilotReadable} from "@copilotkit/react-core";
 import { createContext, useContext, useState, ReactNode } from "react";
 import { defaultTasks } from "../default-tasks";
 import { Task, TaskStatus } from "../tasks.types";
@@ -16,6 +16,19 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+
+
+  const {
+    visibleMessages, // An array of messages that are currently visible in the chat.
+    appendMessage, // A function to append a message to the chat.
+    setMessages, // A function to set the messages in the chat.
+    deleteMessage, // A function to delete a message from the chat.
+    reloadMessages, // A function to reload the messages from the API.
+    stopGeneration, // A function to stop the generation of the next message.
+    isLoading, // A boolean indicating if the chat is loading.
+  } = useCopilotChat();
+
+  console.log(visibleMessages, "visibleMessages");
 
   useCopilotReadable({
     description: "The state of the todo list",
