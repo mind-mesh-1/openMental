@@ -1,15 +1,23 @@
-"use client";
+'use client';
 
-import { AddTodo } from "@/components/AddTodo";
-import { Task } from "@/components/Task";
-import { useTasks } from "@/lib/hooks/use-tasks";
-import { TaskStatus } from "@/lib/tasks.types";
-import { AnimatePresence } from "framer-motion";
+import { AddTodo } from '@/components/AddTodo';
+import { Task } from '@/components/Task';
+import { useTasks } from '@/lib/hooks/use-tasks';
+import { TaskStatus } from '@/lib/tasks.types';
+import { AnimatePresence } from 'framer-motion';
+import { ReactElement } from 'react';
 
-export function TasksList() {
+interface IProp {
+  className?: String;
+}
+const TasksList = (props: IProp): ReactElement => {
+  const { className } = props;
+
   const { tasks } = useTasks();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-8 md:p-24">
+    <main
+      className={`flex h-screen flex-col items-center justify-between p-8 md:p-24 ${className}`}
+    >
       <div className="flex flex-col gap-4 min-w-full md:min-w-[500px]">
         <h1 className="text-2xl font-bold">✍️ My Todos</h1>
         <AddTodo />
@@ -29,4 +37,6 @@ export function TasksList() {
       </div>
     </main>
   );
-}
+};
+
+export default TasksList;
