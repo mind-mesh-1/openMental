@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { join } from 'path';
+import fs from 'fs/promises';
 
 class FileManagementController {
   // upload file from client
@@ -19,9 +21,20 @@ class FileManagementController {
     req: NextApiRequest,
     res: NextApiResponse
   ): Promise<void> {
-    res
-      .status(501)
-      .json({ error: 'Retrieve file nodes Method not implemented.' });
+    try {
+      const { id } = req.query;
+      if (!id || typeof id !== 'string') {
+        res.status(400).json({ error: 'Source ID is required' });
+        return;
+      }
+
+      const filePath = join(process.cwd(), 'public/uploads', `${id}.txt`);
+      const content = await fs.readFile(filePath, 'utf-8');
+      res.status(200).json({ content });
+    } catch (error) {
+      console.error('Error retrieving file:', error);
+      res.status(500).json({ error: 'Failed to retrieve file content' });
+    }
   }
 }
 

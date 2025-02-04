@@ -21,9 +21,19 @@ const SourcesContext = React.createContext<SourceContextType | undefined>(
 );
 
 const mockSources: Source[] = [
-  { id: '1', name: 'Source 1', fileType: 'pdf', isActive: true },
-  { id: '2', name: 'Source 2', fileType: 'docx', isActive: false },
-  { id: '3', name: 'Source 3', fileType: 'pdf', isActive: true },
+  {
+    id: 'paul_graham_essay',
+    name: 'paul graham',
+    fileType: 'txt',
+    isActive: true,
+  },
+  {
+    id: 'sam_altman_essay',
+    name: 'sam_altman_essay',
+    fileType: 'txt',
+    isActive: false,
+  },
+  { id: '3', name: 'Source 3', fileType: 'pdf', isActive: false },
 ];
 
 const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
