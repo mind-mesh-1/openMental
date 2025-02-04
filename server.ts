@@ -21,7 +21,7 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     //   return [];
     // },
 
-    actions: ({ properties, url }) => {
+    actions: () => {
       return [
         {
           name: 'fetchNameForUserId',
@@ -34,7 +34,7 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
               required: true,
             },
           ],
-          handler: async (userId: string) => {
+          handler: async () => {
             return {
               name: 'Darth Doe',
             };
@@ -52,7 +52,7 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
               required: true,
             },
           ],
-          handler: async (payload: any) => {
+          handler: async (payload: { query: string }) => {
             const { query } = payload;
             const response = await askArticle(query);
             return {

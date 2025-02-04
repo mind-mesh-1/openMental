@@ -8,7 +8,7 @@ import { AnimatePresence } from 'framer-motion';
 import { ReactElement } from 'react';
 
 interface IProp {
-  className?: String;
+  className?: string;
 }
 const TasksList = (props: IProp): ReactElement => {
   const { className } = props;

@@ -43,7 +43,7 @@ const saveToFileSystem = async (
   }
 };
 
-const saveToBlobStorage = async (buffer: Buffer, category: blobCategory) => {
+const saveToBlobStorage = async () => {
   throw new Error(
     'Not Implemented: This function is a placeholder for storing in blob storage.'
   );
