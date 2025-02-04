@@ -6,27 +6,29 @@ class FileManagementController {
     // upload into storage
     // embed into vector storage
     // Implementation for downloading a file
-    throw new Error(' download file Method not implemented.');
+    res.status(501).json({ error: 'Upload file Method not implemented.' });
   }
 
   // download previously uploaded file and stream into client
   async downloadFile(
     req: NextApiRequest,
     res: NextApiResponse
-  ): Promise<void> {}
+  ): Promise<void> {
+    res.status(501).json({ error: 'Download file Method not implemented.' });
+  }
 
   // Method to handle retrieval of file nodes
   async retrieveFileNodes(
     req: NextApiRequest,
     res: NextApiResponse
   ): Promise<void> {
-    throw new Error(' retrieve file nodes Method not implemented.');
+    res.status(501).json({ error: 'Retrieve file nodes Method not implemented.' });
   }
 }
 
 const fileManagementController = new FileManagementController();
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function fileManagementHandler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
 
   switch (method) {

@@ -2,8 +2,6 @@ import fs from 'node:fs/promises';
 
 import {
   Document,
-  MetadataMode,
-  NodeWithScore,
   VectorStoreIndex,
 } from 'llamaindex';
 
@@ -24,7 +22,7 @@ async function askArticle(question: string) {
 
     // Query the index
     const queryEngine = index.asQueryEngine();
-    const { response, sourceNodes } = await queryEngine.query({
+    const { response } = await queryEngine.query({
       query: question,
     });
 
