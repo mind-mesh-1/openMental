@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { loadFileInToVectorStore, saveToFileSystem } from '../utils.server';
-import { writeFile, readFile } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import { mkdir } from 'fs';
-import { join } from 'path';
 
 // Mock fs/promises and fs modules
 vi.mock('fs/promises', async () => {
@@ -69,7 +68,8 @@ describe('saveToFileSystem', () => {
     const extension = 'txt';
 
     // Mock writeFile to throw an error
-    (writeFile as any).mockRejectedValueOnce(new Error('Write failed'));
+    const mockWriteFile = writeFile as jest.Mock;
+    mockWriteFile.mockRejectedValueOnce(new Error('Write failed'));
 
     const result = await saveToFileSystem(buffer, category, extension);
     expect(writeFile).toHaveBeenCalledTimes(1);

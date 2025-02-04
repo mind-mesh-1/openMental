@@ -4,7 +4,7 @@ import TasksList from '@/components/TasksList';
 
 import { TasksProvider } from '@/lib/hooks/use-tasks';
 import { CopilotKit } from '@copilotkit/react-core';
-import { CopilotChat, CopilotKitCSSProperties } from '@copilotkit/react-ui';
+import { CopilotChat } from '@copilotkit/react-ui';
 import { SourceList } from '@/components/sources';
 import { SourcesProvider } from '@/lib/hooks/use-sources';
 import '@copilotkit/react-ui/styles.css';
@@ -13,8 +13,8 @@ import '@radix-ui/themes/styles.css';
 export default function Home() {
   const COPILOT_RUNTIME_ENDPOINT =
     process.env.NEXT_PUBLIC_COPILOT_RUNTIME_ENDPOINT;
-  const COPILOT_CLOUD_PUBLIC_API_KEY =
-    process.env.NEXT_PUBLIC_COPILOT_CLOUD_PUBLIC_API_KEY;
+  // const COPILOT_CLOUD_PUBLIC_API_KEY =
+  //   process.env.NEXT_PUBLIC_COPILOT_CLOUD_PUBLIC_API_KEY;
 
   console.log('runtime_endpoint', COPILOT_RUNTIME_ENDPOINT);
 

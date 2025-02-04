@@ -1,5 +1,4 @@
 import React from 'react';
-import { mock } from 'node:test';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 
 type Source = {
@@ -11,7 +10,7 @@ type Source = {
 
 type SourceContextType = {
   sources: Source[];
-  uploadSource: (source: any) => void;
+  uploadSource: (source: Source) => void;
   viewSource: (source_id: string) => void;
   toggleSource: (source_id: string) => void;
   deleteSource: (source_id: string) => void;
@@ -29,7 +28,7 @@ const mockSources: Source[] = [
 
 const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   const [sources, setSources] = React.useState<Source[]>(mockSources);
-  const uploadSource = (source: any) => {
+  const uploadSource = (source: Source) => {
     setSources((prev) => [...prev, source]);
   };
 
@@ -48,7 +47,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const deleteSource = (source_id: string) => {
-    console.log('Deleting source');
+    setSources((prev) => prev.filter((source) => source.id !== source_id));
   };
 
   useCopilotReadable({
