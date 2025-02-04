@@ -1,9 +1,6 @@
 import fs from 'node:fs/promises';
 
-import {
-  Document,
-  VectorStoreIndex,
-} from 'llamaindex';
+import { Document, VectorStoreIndex } from 'llamaindex';
 
 async function askArticle(question: string) {
   try {

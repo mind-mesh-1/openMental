@@ -10,10 +10,7 @@ class FileManagementController {
   }
 
   // download previously uploaded file and stream into client
-  async downloadFile(
-    req: NextApiRequest,
-    res: NextApiResponse
-  ): Promise<void> {
+  async downloadFile(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     res.status(501).json({ error: 'Download file Method not implemented.' });
   }
 
@@ -22,13 +19,18 @@ class FileManagementController {
     req: NextApiRequest,
     res: NextApiResponse
   ): Promise<void> {
-    res.status(501).json({ error: 'Retrieve file nodes Method not implemented.' });
+    res
+      .status(501)
+      .json({ error: 'Retrieve file nodes Method not implemented.' });
   }
 }
 
 const fileManagementController = new FileManagementController();
 
-export default async function fileManagementHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function fileManagementHandler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { method } = req;
 
   switch (method) {
@@ -48,4 +50,4 @@ export default async function fileManagementHandler(req: NextApiRequest, res: Ne
       res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
-};
+}
