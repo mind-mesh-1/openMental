@@ -3,6 +3,7 @@ import { SourceViewer } from '@/components/sources/SourceViewer';
 import { useSources } from '@/lib/hooks/use-sources';
 import Uploady from '@rpldy/uploady';
 import { useState } from 'react';
+import { DocumentQA } from '../document-qa';
 
 const SourceList = () => {
   const { sources, toggleSource } = useSources();
@@ -66,7 +67,20 @@ const SourceList = () => {
       </div>
 
       <div className="flex-1 border-t mt-4 min-h-0">
-        <SourceViewer content={content} isLoading={isLoading} error={error} />
+        {selectedSourceId ? (
+          <div className="flex flex-col h-full">
+            <div className="flex-1 overflow-auto">
+              <SourceViewer content={content} isLoading={isLoading} error={error} />
+            </div>
+            <div className="flex-1 border-t">
+              <DocumentQA />
+            </div>
+          </div>
+        ) : (
+          <div className="p-4 text-center text-gray-500">
+            Select a source to view and ask questions
+          </div>
+        )}
       </div>
     </div>
   );
