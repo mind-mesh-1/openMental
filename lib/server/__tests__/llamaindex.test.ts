@@ -1,5 +1,40 @@
-import { describe, it, expect } from 'vitest';
-import { loadFileInToVectorStore } from '../utils.server';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { loadFileInToVectorStore, saveToFileSystem } from '../utils.server';
+import { writeFile, readFile } from 'fs/promises';
+import { mkdir } from 'fs';
+import { join } from 'path';
+
+// Mock fs/promises and fs modules
+vi.mock('fs/promises', async () => {
+  const actual = await vi.importActual('fs/promises');
+  return {
+    ...actual,
+    writeFile: vi.fn(),
+    readFile: vi.fn().mockResolvedValue('Test essay content'),
+  };
+});
+
+vi.mock('fs', () => ({
+  mkdir: vi.fn((path, options, callback) => callback()),
+}));
+
+// Mock llamaindex
+vi.mock('llamaindex', () => ({
+  VectorStoreIndex: {
+    fromDocuments: vi.fn().mockResolvedValue({
+      asQueryEngine: () => ({
+        query: () => ({
+          response: 'Test response',
+          sourceNodes: [{ score: 1, text: 'Test node' }],
+        }),
+      }),
+    }),
+  },
+  Document: vi.fn(),
+}));
+
+// Set up environment variables for testing
+process.env.OPENAI_API_KEY = 'test-key';
 
 console.log('GGGGGG');
 
@@ -13,6 +48,38 @@ describe('sanity test', () => {
   });
 });
 
+describe('saveToFileSystem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should save file successfully', async () => {
+    const buffer = Buffer.from('test content');
+    const category = 'txt';
+    const extension = 'txt';
+
+    const result = await saveToFileSystem(buffer, category, extension);
+
+    expect(writeFile).toHaveBeenCalledTimes(1);
+    expect(mkdir).toHaveBeenCalledTimes(1);
+    expect(result).toMatch(/^\/uploads\/txt\/.+\.txt$/);
+  });
+
+  it('should handle errors gracefully', async () => {
+    const buffer = Buffer.from('test content');
+    const category = 'txt';
+    const extension = 'txt';
+
+    // Mock writeFile to throw an error
+    (writeFile as any).mockRejectedValueOnce(new Error('Write failed'));
+
+    const result = await saveToFileSystem(buffer, category, extension);
+
+    expect(writeFile).toHaveBeenCalledTimes(1);
+    expect(result).toBeUndefined();
+  });
+});
+
 describe('llamaIndex on nextJS', () => {
   it('should load file from file system and qa', async () => {
     const { response, sourceNodes } = await loadFileInToVectorStore(
@@ -21,7 +88,8 @@ describe('llamaIndex on nextJS', () => {
     );
 
     expect(response).toBeDefined();
-    expect(sourceNodes?.length).toBeGreaterThan(0);
-    console.log('response', response, sourceNodes);
+    expect(sourceNodes).toBeDefined();
+    expect(sourceNodes).toHaveLength(1);
+    expect(sourceNodes[0]).toEqual({ score: 1, text: 'Test node' });
   }, 20000);
 });
