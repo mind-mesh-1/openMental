@@ -1,0 +1,26 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:vitest-globals/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "@vitest", "prettier", "unused-imports"],
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true,
+    "vitest-globals/env": true
+  },
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      "extends": ["plugin:vitest/recommended"]
+    }
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "unused-imports/no-unused-imports": "error"
+  }
+}
