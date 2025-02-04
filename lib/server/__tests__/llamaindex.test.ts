@@ -38,7 +38,7 @@ process.env.OPENAI_API_KEY = 'test-key';
 
 describe('sanity test', () => {
   it('should add numbers correctly', () => {
-    expect(1 + 1).toBe(2);
+    expect(1 + 1).toBe(3);
   });
 
   it('should load environment variables', () => {
