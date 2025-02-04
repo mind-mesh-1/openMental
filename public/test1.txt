@@ -1,0 +1,6 @@
+LlamaIndex is a data framework for LLM applications to ingest, structure, and access data. Key features include:
+1. Data Connectors to ingest your data from different sources
+2. Data Indexes to structure your data
+3. Engines to query your data
+4. Advanced RAG Modules for better retrieval and generation
+5. Evaluation Modules to evaluate your RAG pipelines

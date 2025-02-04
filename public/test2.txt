@@ -1,0 +1,6 @@
+TypeScript is a programming language developed and maintained by Microsoft. It is a strict syntactical superset of JavaScript and adds optional static typing to the language. Key features include:
+1. Static typing with type inference
+2. Object-oriented features like interfaces and classes
+3. Support for modern JavaScript features
+4. Excellent tooling and IDE support
+5. Compile-time type checking

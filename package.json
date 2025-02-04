@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "next lint && prettier --check .",
     "prettify": "prettier --write .",
-    "test": "NODE_ENV=test vitest --run"
+    "test": "NODE_ENV=test vitest --run",
+    "start-qa": "tsx ./src/qaServer.ts"
   },
   "husky": {
     "hooks": {
@@ -36,13 +37,18 @@
     "@rpldy/upload-button": "^1.9.0",
     "@rpldy/uploader": "^1.9.0",
     "@rpldy/uploady": "^1.9.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "@vitest/eslint-plugin": "^1.1.25",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "framer-motion": "^11.3.12",
     "groq-sdk": "^0.5.0",
-    "llamaindex": "^0.8.31",
+    "llamaindex": "^0.8.32",
     "lucide-react": "^0.414.0",
     "next": "14.2.5",
     "react": "^18",
