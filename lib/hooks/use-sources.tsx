@@ -20,26 +20,36 @@ const SourcesContext = React.createContext<SourceContextType | undefined>(
   undefined
 );
 
-const mockSources: Source[] = [
-  {
-    id: 'paul_graham_essay',
-    name: 'paul graham',
-    fileType: 'txt',
-    isActive: true,
-  },
-  {
-    id: 'sam_altman_essay',
-    name: 'sam_altman_essay',
-    fileType: 'txt',
-    isActive: false,
-  },
-  { id: '3', name: 'Source 3', fileType: 'pdf', isActive: false },
-];
-
 const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [sources, setSources] = React.useState<Source[]>(mockSources);
-  const uploadSource = (source: Source) => {
-    setSources((prev) => [...prev, source]);
+  const [sources, setSources] = React.useState<Source[]>([]);
+
+  React.useEffect(() => {
+    const fetchSources = async () => {
+      try {
+        const response = await fetch('/api/sources');
+        if (!response.ok) {
+          throw new Error('Failed to fetch sources');
+        }
+        const data = await response.json();
+        setSources(data.sources);
+      } catch (error) {
+        console.error('Error fetching sources:', error);
+      }
+    };
+
+    fetchSources();
+  }, []);
+  const uploadSource = async (source: Source) => {
+    try {
+      const response = await fetch('/api/sources');
+      if (!response.ok) {
+        throw new Error('Failed to fetch sources');
+      }
+      const data = await response.json();
+      setSources(data.sources);
+    } catch (error) {
+      console.error('Error refreshing sources:', error);
+    }
   };
 
   const viewSource = (source_id: string) => {
