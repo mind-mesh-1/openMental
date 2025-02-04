@@ -7,8 +7,8 @@ import { CopilotKit } from '@copilotkit/react-core';
 import { CopilotChat, CopilotKitCSSProperties } from '@copilotkit/react-ui';
 import { SourceList } from '@/components/sources';
 import { SourcesProvider } from '@/lib/hooks/use-sources';
-
 import '@copilotkit/react-ui/styles.css';
+import '@radix-ui/themes/styles.css';
 
 export default function Home() {
   const COPILOT_RUNTIME_ENDPOINT =

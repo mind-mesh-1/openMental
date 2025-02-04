@@ -1,15 +1,11 @@
-import '@radix-ui/themes/styles.css';
-import { Button } from '@/components/ui/button';
+import Uploady, { useUploady } from '@rpldy/uploady';
+import UploadButton from '@rpldy/upload-button';
 
+//TODO: type check to ensure only pdf and txt files are uploaded (FE)
 const AddSourceButton = () => {
-  return (
-    <Button
-      type="submit"
-      onClick={(e) => alert('Upload Resource to server & Embed')}
-    >
-      Upload Source
-    </Button>
-  );
+  const uploady = useUploady();
+
+  return <UploadButton />;
 };
 
 export { AddSourceButton };
