@@ -36,8 +36,6 @@ vi.mock('llamaindex', () => ({
 // Set up environment variables for testing
 process.env.OPENAI_API_KEY = 'test-key';
 
-console.log('GGGGGG');
-
 describe('sanity test', () => {
   it('should add numbers correctly', () => {
     expect(1 + 1).toBe(2);
