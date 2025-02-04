@@ -1,24 +1,24 @@
-import { Task, TaskStatus } from "./tasks.types";
+import { Task, TaskStatus } from './tasks.types';
 
 export const defaultTasks: Task[] = [
   {
     id: 1,
-    title: "Complete project proposal",
+    title: 'Complete project proposal',
     status: TaskStatus.done,
   },
   {
     id: 2,
-    title: "Review design mockups",
+    title: 'Review design mockups',
     status: TaskStatus.done,
   },
   {
     id: 3,
-    title: "Prepare presentation slides",
+    title: 'Prepare presentation slides',
     status: TaskStatus.todo,
   },
   {
     id: 4,
-    title: "Send meeting notes email",
+    title: 'Send meeting notes email',
     status: TaskStatus.todo,
   },
   {

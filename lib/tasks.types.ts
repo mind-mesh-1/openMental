@@ -5,6 +5,6 @@ export type Task = {
 };
 
 export enum TaskStatus {
-  todo = "todo",
-  done = "done",
+  todo = 'todo',
+  done = 'done',
 }

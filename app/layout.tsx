@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Suspense } from "react";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Suspense } from 'react';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "CopilotKit Todos",
-  description: "A simple todo app using CopilotKit",
+  title: 'CopilotKit Todos',
+  description: 'A simple todo app using CopilotKit',
 };
 
 export default function RootLayout({

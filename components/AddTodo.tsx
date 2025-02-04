@@ -1,15 +1,15 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useTasks } from "@/lib/hooks/use-tasks";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { useTasks } from '@/lib/hooks/use-tasks';
 
 export function AddTodo() {
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState('');
   const { addTask } = useTasks();
 
   const handleAddTask = () => {
     addTask(title);
-    setTitle("");
+    setTitle('');
   };
 
   return (

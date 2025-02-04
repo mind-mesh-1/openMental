@@ -38,7 +38,7 @@ process.env.OPENAI_API_KEY = 'test-key';
 
 describe('sanity test', () => {
   it('should add numbers correctly', () => {
-    expect(1 + 1).toBe(3);
+    expect(1 + 1).toBe(2);
   });
 
   it('should load environment variables', () => {
@@ -72,7 +72,6 @@ describe('saveToFileSystem', () => {
     (writeFile as any).mockRejectedValueOnce(new Error('Write failed'));
 
     const result = await saveToFileSystem(buffer, category, extension);
-
     expect(writeFile).toHaveBeenCalledTimes(1);
     expect(result).toBeUndefined();
   });
