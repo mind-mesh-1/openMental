@@ -1,36 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { loadFileInToVectorStore, saveToFileSystem } from '../utils.server';
+import {
+  loadDocuments,
+  loadFileInToVectorStore,
+  saveToFileSystem,
+} from '../utils.server';
 import { writeFile } from 'fs/promises';
 import { mkdir } from 'fs';
-
-// Mock fs/promises and fs modules
-vi.mock('fs/promises', async () => {
-  const actual = await vi.importActual('fs/promises');
-  return {
-    ...actual,
-    writeFile: vi.fn(),
-    readFile: vi.fn().mockResolvedValue('Test essay content'),
-  };
-});
-
-vi.mock('fs', () => ({
-  mkdir: vi.fn((path, options, callback) => callback()),
-}));
-
-// Mock llamaindex
-vi.mock('llamaindex', () => ({
-  VectorStoreIndex: {
-    fromDocuments: vi.fn().mockResolvedValue({
-      asQueryEngine: () => ({
-        query: () => ({
-          response: 'Test response',
-          sourceNodes: [{ score: 1, text: 'Test node' }],
-        }),
-      }),
-    }),
-  },
-  Document: vi.fn(),
-}));
 
 // Set up environment variables for testing
 process.env.OPENAI_API_KEY = 'test-key';
@@ -89,4 +64,12 @@ describe('llamaIndex on nextJS', () => {
     expect(sourceNodes).toHaveLength(1);
     expect(sourceNodes[0]).toEqual({ score: 1, text: 'Test node' });
   }, 20000);
+
+  it('loadDocument should return a document', async () => {
+    const documents = await loadDocuments([
+      'paul_graham_essay',
+      'sam_altman_essay',
+    ]);
+    expect(documents).toHaveLength(2);
+  });
 });

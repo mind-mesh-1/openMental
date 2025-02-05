@@ -23,8 +23,6 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
 
   const { visibleMessages } = useCopilotChat();
 
-  console.log(visibleMessages, 'visibleMessages');
-
   useCopilotReadable({
     description: 'The state of the todo list',
     value: JSON.stringify(tasks),
