@@ -77,17 +77,35 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
 
   useCopilotAction({
     name: 'analyzeSources',
-    description: 'Analyze active sources',
+    available: 'enabled',
+    description: 'answer questions based selected sources',
     parameters: [
       {
-        name: 'source_id',
-        type: 'string[]',
-        description: 'The id of the source to analyze',
+        name: 'question',
+        type: 'string',
+        description: 'The question to ask the LLM on the source',
         required: true,
       },
     ],
-    handler: ({ source_id }) => {
-      alert(`analyzing source ${source_id}`);
+    handler: ({ question }) => {
+      console.log(
+        'analyzing source',
+        sources.filter((el) => el.isActive),
+        question
+      );
+
+      const response = fetch('/api/qa', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sourceIds: sources.filter((el) => el.isActive).map((el) => el.id),
+          question,
+        }),
+      });
+
+      alert(response);
     },
   });
 

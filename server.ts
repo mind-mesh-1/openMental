@@ -5,7 +5,6 @@ import {
   copilotRuntimeNodeHttpEndpoint,
 } from '@copilotkit/runtime';
 import { config } from 'dotenv';
-import { askArticle } from '@/app/controllers/core';
 
 config();
 
@@ -23,41 +22,64 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
 
     actions: () => {
       return [
+        // {
+        //   name: 'fetchNameForUserId',
+        //   description: 'Fetches user name from the database for a given ID.',
+        //   parameters: [
+        //     {
+        //       name: 'userId',
+        //       type: 'string',
+        //       description: 'The ID of the user to fetch data for.',
+        //       required: true,
+        //     },
+        //   ],
+        //   handler: async () => {
+        //     return {
+        //       name: 'Darth Doe',
+        //     };
+        //   },
+        // },
+        // {
+        //   name: 'askArticle',
+        //   description: 'answer any question on the paul graham essay',
+        //   parameters: [
+        //     {
+        //       name: 'query',
+        //       type: 'string',
+        //       description:
+        //         'The question to ask the LLM on the paul graham essay',
+        //       required: true,
+        //     },
+        //   ],
+        //   handler: async (payload: { query: string }) => {
+        //     const { query } = payload;
+        //     const response = await askArticle(query);
+        //     return {
+        //       response,
+        //     };
+        //   },
+        // },
+
         {
-          name: 'fetchNameForUserId',
-          description: 'Fetches user name from the database for a given ID.',
+          name: 'analyzeSources',
+          description: 'Analyze active sources based on user questions',
           parameters: [
             {
-              name: 'userId',
+              name: 'source_ids',
+              type: 'string[]',
+              description: 'The ids of the source to analyze',
+              required: true,
+            },
+            {
+              name: 'question',
               type: 'string',
-              description: 'The ID of the user to fetch data for.',
+              description: 'The question to ask the LLM on the source',
               required: true,
             },
           ],
-          handler: async () => {
-            return {
-              name: 'Darth Doe',
-            };
-          },
-        },
-        {
-          name: 'askArticle',
-          description: 'answer any question on the paul graham essay',
-          parameters: [
-            {
-              name: 'query',
-              type: 'string',
-              description:
-                'The question to ask the LLM on the paul graham essay',
-              required: true,
-            },
-          ],
-          handler: async (payload: { query: string }) => {
-            const { query } = payload;
-            const response = await askArticle(query);
-            return {
-              response,
-            };
+
+          handler: async ({ source_ids, question }) => {
+            console.log('copilot run time', source_ids, question);
           },
         },
       ];

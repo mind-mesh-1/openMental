@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen">
-      <CopilotKit runtimeUrl={COPILOT_RUNTIME_ENDPOINT}>
+      <CopilotKit runtimeUrl="api/copilotkit">
         <div className="flex-1 border border-red-500 p-4 m-2 rounded">
           <SourcesProvider>
             <SourceList />
