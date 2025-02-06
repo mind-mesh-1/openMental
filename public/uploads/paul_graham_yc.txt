@@ -1,0 +1,30 @@
+In a series of posts on X on Thursday, Paul Graham, the co-founder of startup accelerator Y Combinator, brushed off claims that OpenAI CEO Sam Altman was pressured to resign as president of Y Combinator in 2019 due to potential conflicts of interest.
+
+“People have been claiming [Y Combinator] fired Sam Altman,” Graham writes. “That’s not true.”
+
+
+Altman became a partner at Y Combinator in 2011, initially working there on a part-time basis. In February 2014, Graham named him president of Y Combinator.
+
+Altman — along with Elon Musk, Peter Thiel, Y Combinator founding partner Jessica Livingston and others — announced OpenAI as a nonprofit in 2015, raising $1 billion.
+
+Altman for several years split his time between Y Combinator and OpenAI, effectively running both. But — according to Graham — when OpenAI announced in 2019 that it would establish a for-profit subsidiary of which Altman would be CEO, Livingston told Altman that he had to choose one or the other: OpenAI or Y Combinator.
+
+They told him “if he was going to work full-time on OpenAI, we should find someone else to run YC, and he agreed,” Graham writes. “If he’d said that he was going to find someone else to be CEO of OpenAI so that he could focus 100% on YC, we’d have been fine with that too.”
+
+TC All Stage 2025
+TechCrunch is returning to Boston with All Stage (formerly known as Early Stage), delivering a full day packed with essential, actionable insights for founders.
+Boston, MA | July 17, 2025
+GET ON WAITLIST
+Graham’s retelling of events contradicts reporting that Altman was forced to resign from Y Combinator after the accelerator’s partners alleged he’d put personal projects, including OpenAI, ahead of his duties as president. According to a Washington Post story last November, Graham cut an overseas trip short to personally give Altman the boot.
+
+Helen Toner, one of several ex-OpenAI board members who moved to remove Altman as OpenAI’s CEO over allegations of deceptive behavior before Altman managed to claw the role back, also claimed in an appearance on the Ted AI Show podcast that the true reasons for Altman’s departure from Y Combinator were “hushed up at the time.”
+
+Reportedly, some Y Combinator partners took specific issue with the indirect stake in OpenAI Altman held while Y Combinator’s president. Y Combinator’s late-stage fund invested $10 million in OpenAI’s for-profit subsidiary.
+
+But Graham says that the investment was made before Altman was full-time at OpenAI — and that Graham himself wasn’t aware of it.
+
+“This was not a very big investment for those funds,” Graham wrote. “And obviously it wasn’t influencing me, since I found out about it 5 minutes ago.”
+
+Graham’s posts seem conspicuously timed with an op-ed in The Economist penned by OpenAI board members Bret Taylor and Larry Summers that pushes back against assertions made by Toner and Tasha McCauley, another former OpenAI board member, that Altman can’t be trusted to “reliably withstand the pressure of profit incentives.”
+
+Toner and McCauley might have a point. The Information reports that Altman is considering turning OpenAI into a for-profit corporation as investors, in particular Microsoft, push the firm to prioritize commercial projects.

@@ -43,6 +43,8 @@ const saveToFileSystem = async (
   }
 };
 
+const saveToPineCone = async () => {};
+
 const saveToBlobStorage = async () => {
   throw new Error(
     'Not Implemented: This function is a placeholder for storing in blob storage.'

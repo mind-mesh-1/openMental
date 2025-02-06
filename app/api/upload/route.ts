@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { saveToFileSystem } from '@/lib/server/utils.server';
+import { saveToFileSystem } from '@/lib/utils.server';
 
 //TODO: type check to ensure only pdf and txt files are uploaded (BE)
 
