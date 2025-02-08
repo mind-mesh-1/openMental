@@ -4,7 +4,8 @@ import {
   useCopilotReadable,
 } from '@copilotkit/react-core';
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { defaultTasks } from '../default-tasks';
+import { useEffect, useState } from 'react';
+import { getData } from '../dao/catalog';
 import { Task, TaskStatus } from '../tasks.types';
 
 let nextId = defaultTasks.length + 1;
@@ -19,7 +20,15 @@ type TasksContextType = {
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
-  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData();
+      setTasks(data.map((doc: any) => ({ id: doc.id, title: doc.title, status: TaskStatus.todo })));
+    };
+    fetchData();
+  }, []);
 
   const { visibleMessages } = useCopilotChat();
 

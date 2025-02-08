@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getData } from '../dao/catalog';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 
 type Source = {
@@ -25,6 +26,13 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
 
   React.useEffect(() => {
     const fetchSources = async () => {
+      try {
+        const data = await getData();
+        setSources(data.map((doc: any) => ({ id: doc.id, name: doc.title, fileType: 'text', isActive: false })));
+      } catch (error) {
+        console.error('Error fetching sources:', error);
+      }
+    };
       try {
         const response = await fetch('/api/sources');
         if (!response.ok) {

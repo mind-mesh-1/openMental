@@ -32,9 +32,10 @@ export function Task({ task: { id, title, status } }: { task: Task }) {
       <Label
         htmlFor={`task_${id}`}
         className={cn(
-          'flex-1 text-sm text-muted-foreground',
+          'flex-1 text-sm text-muted-foreground cursor-pointer',
           status === TaskStatus.done && 'line-through'
         )}
+        onClick={() => fetchDocumentContent(id)}
       >
         {title}
       </Label>

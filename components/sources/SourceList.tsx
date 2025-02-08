@@ -13,6 +13,23 @@ const SourceList = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleSourceClick = async (sourceId: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await getData();
+      const document = data.find((doc: any) => doc.id === sourceId);
+      if (!document) {
+        throw new Error('Document not found');
+      }
+      setContent(document.content);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setContent(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
     setSelectedSourceId(sourceId);
     setIsLoading(true);
     setError(null);
