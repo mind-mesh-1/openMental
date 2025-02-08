@@ -21,7 +21,6 @@ Settings.embedModel = new OpenAIEmbedding({
 import { PineconeVectorStore } from '@llamaindex/pinecone';
 import { SimpleDirectoryReader } from '@llamaindex/readers/directory';
 import { Index, Pinecone, RecordMetadata } from '@pinecone-database/pinecone';
-import { v4 as uuidv4 } from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -46,7 +45,7 @@ function callback(
   return true;
 }
 
-class VectorIndex {
+class KnowledgeIndex {
   private client: Pinecone;
   private pc_index: Index<RecordMetadata>;
   public constructor(indexName: string) {
@@ -85,14 +84,16 @@ class VectorIndex {
     }
   }
 
+  //TODO: what are different indexing strategies from llamaIndex
   public async uploadToPineCone(
+    sourceId: string,
     buffer: Buffer<ArrayBufferLike>
   ): Promise<VectorStoreIndex | undefined> {
     try {
       const document = new Document({
         text: buffer.toString('utf-8'),
         metadata: {
-          custom_id: uuidv4(),
+          source_id: sourceId,
         },
       });
 
@@ -125,8 +126,7 @@ class VectorIndex {
     return index.asQueryEngine().query({ query });
   }
 
-  //TODO: suppoort metadata filter in llamaIndexTS as pinecone supports it
-  public async queryDocuments(documentIds: string[], query: string) {
+  async queryDocuments(documentIds: string[], query: string) {
     const pcvs = new PineconeVectorStore({
       indexName: 'sources',
       namespace: 'buffers',
@@ -138,7 +138,7 @@ class VectorIndex {
     const filters: MetadataFilters = {
       filters: [
         {
-          key: 'custom_id',
+          key: 'source_id',
           value: documentIds,
           operator: 'in',
         },
@@ -153,7 +153,33 @@ class VectorIndex {
     return queryEngine.query({ query });
   }
 
-  async listSources() {}
+  async summarizeSource(source_id: string) {
+    const pcvs = new PineconeVectorStore({
+      indexName: 'sources',
+      namespace: 'buffers',
+      chunkSize: 512,
+    });
+
+    const index = await VectorStoreIndex.fromVectorStore(pcvs);
+
+    const filters: MetadataFilters = {
+      filters: [
+        {
+          key: 'source_id',
+          value: [source_id],
+          operator: 'in',
+        },
+      ],
+    };
+
+    const queryEngine = index.asQueryEngine({
+      preFilters: filters,
+      similarityTopK: 5,
+      // retriever: index.asRetriever({ mode: SummaryRetrieverMode.LLM }),
+    });
+
+    return queryEngine.query({ query: 'summarize the article' });
+  }
 
   public async purgeNamespace(nameSpace: string) {
     try {
@@ -165,4 +191,4 @@ class VectorIndex {
   }
 }
 
-export { VectorIndex };
+export { KnowledgeIndex };

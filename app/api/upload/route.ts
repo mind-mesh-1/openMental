@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { writeFile } from 'fs/promises';
 import pg from 'pg';
 import dotenv from 'dotenv';
+import { KnowledgeIndex } from '@/app/dao/knowledgeIndex';
 
 dotenv.config();
 
@@ -37,20 +38,20 @@ const POST = async (req: NextRequest) => {
 
     const filePath = await saveToFileSystem(buffer, 'txt');
 
-    const id = uuidv4();
+    const source_id = uuidv4();
     const filename = filePath?.split('/').pop();
     const contentType = 'text/plain';
     const size = buffer.length;
     const uploadedAt = new Date();
 
-    console.log('id', id, uploadedAt, buffer.length);
+    console.log('id', source_id, uploadedAt, buffer.length);
 
     const client = await pool.connect();
     try {
       await client.query(
         'INSERT INTO uploads (id, filename, content_type, size, uploaded_at, metadata, buffer) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         [
-          id,
+          source_id,
           filename,
           contentType,
           size,
@@ -59,6 +60,14 @@ const POST = async (req: NextRequest) => {
           buffer,
         ]
       );
+
+      console.log('upload to psql complete');
+
+      const idx = new KnowledgeIndex('sources');
+      const resp = await idx.uploadToPineCone(source_id, buffer);
+
+      console.log('upload to pinecone complete', resp);
+
       return NextResponse.json(
         {
           message: 'File uploaded successfully',

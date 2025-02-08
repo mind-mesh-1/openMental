@@ -6,8 +6,8 @@ import { Suspense } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'CopilotKit Todos',
-  description: 'A simple todo app using CopilotKit',
+  title: 'CopilotKit V2',
+  description: 'a prototype inspired from google notebook llm, plus agents',
 };
 
 export default function RootLayout({

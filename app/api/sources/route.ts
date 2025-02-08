@@ -35,13 +35,15 @@ const pool = new Pool({
 export async function GET() {
   const client = await pool.connect();
   try {
-    const result = await client.query('SELECT id FROM uploads');
-    const sources = result.rows.map((row: { id: string }) => ({
-      id: row.id,
-      name: row.id, // Mocking name as id
-      fileType: 'txt', // Mocking fileType as 'txt'
-      isActive: false, // Mocking isActive as false
-    }));
+    const result = await client.query('SELECT id, filename FROM uploads');
+    const sources = result.rows.map(
+      (row: { id: string; filename: string }) => ({
+        id: row.id,
+        name: row.filename, // Mocking name as id
+        fileType: 'txt', // Mocking fileType as 'txt'
+        isActive: false, // Mocking isActive as false
+      })
+    );
     return NextResponse.json({ sources }, { status: 200 });
   } catch (error) {
     console.error('Error fetching sources:', error);

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 
@@ -77,7 +79,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
 
   useCopilotAction({
     name: 'analyzeSources',
-    available: 'enabled',
+    available: 'remote',
     description: 'answer questions based selected sources',
     parameters: [
       {
@@ -93,19 +95,23 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
         sources.filter((el) => el.isActive),
         question
       );
+    },
+  });
 
-      const response = fetch('/api/qa', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sourceIds: sources.filter((el) => el.isActive).map((el) => el.id),
-          question,
-        }),
-      });
-
-      alert(response);
+  useCopilotAction({
+    name: 'summarizeSource',
+    available: 'remote',
+    description: 'summarize the active source',
+    parameters: [
+      {
+        name: 'source_id',
+        type: 'string',
+        description: 'The id of the source to summarize',
+        required: true,
+      },
+    ],
+    handler: ({ source_id }) => {
+      console.log('summarizing source', source_id);
     },
   });
 
