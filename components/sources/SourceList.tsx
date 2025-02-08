@@ -3,6 +3,7 @@ import { SourceViewer } from '@/components/sources/SourceViewer';
 import { useSources } from '@/lib/hooks/use-sources';
 import Uploady from '@rpldy/uploady';
 import { useState } from 'react';
+const UPLOAD_ENDPOINT = process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT;
 
 const SourceList = () => {
   const { sources, toggleSource } = useSources();
@@ -36,7 +37,7 @@ const SourceList = () => {
       <div className="flex-none p-4">
         <div className="text-lg font-semibold mb-4">Sources</div>
 
-        <Uploady destination={{ url: '/api/upload' }}>
+        <Uploady destination={{ url: UPLOAD_ENDPOINT }}>
           <AddSourceButton />
         </Uploady>
 

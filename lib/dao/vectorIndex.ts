@@ -3,12 +3,25 @@ import { fileURLToPath } from 'node:url';
 import path from 'path';
 import dotenv from 'dotenv';
 import {
-  PineconeVectorStore,
-  SimpleDirectoryReader,
+  Document,
   storageContextFromDefaults,
   VectorStoreIndex,
+  OpenAI,
+  OpenAIEmbedding,
+  MetadataFilters,
 } from 'llamaindex';
+
+import { Settings } from '@llamaindex/core/global';
+
+Settings.llm = new OpenAI();
+Settings.embedModel = new OpenAIEmbedding({
+  model: 'text-embedding-3-small',
+  dimensions: 1536,
+});
+import { PineconeVectorStore } from '@llamaindex/pinecone';
+import { SimpleDirectoryReader } from '@llamaindex/readers/directory';
 import { Index, Pinecone, RecordMetadata } from '@pinecone-database/pinecone';
+import { v4 as uuidv4 } from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -33,7 +46,7 @@ function callback(
   return true;
 }
 
-class indexController {
+class VectorIndex {
   private client: Pinecone;
   private pc_index: Index<RecordMetadata>;
   public constructor(indexName: string) {
@@ -44,7 +57,7 @@ class indexController {
     this.pc_index = this.client.Index(indexName);
   }
 
-  public async loadDirectories(
+  public async loadFromDirectories(
     absoluteSourceDir: string
   ): Promise<VectorStoreIndex | undefined> {
     // const sourceDir = '/home/jingyi/WebstormProjects/copilot-v2/public/uploads';
@@ -67,21 +80,80 @@ class indexController {
         storageContext: ctx,
       });
     } catch (err) {
-      console.error(fileName, err);
+      console.error('Error in load directories', err);
       return undefined;
     }
   }
 
-  public async query(nameSpace: string, query: string) {
+  public async uploadToPineCone(
+    buffer: Buffer<ArrayBufferLike>
+  ): Promise<VectorStoreIndex | undefined> {
+    try {
+      const document = new Document({
+        text: buffer.toString('utf-8'),
+        metadata: {
+          custom_id: uuidv4(),
+        },
+      });
+
+      const pcvs = new PineconeVectorStore({
+        indexName: 'sources',
+        namespace: 'buffers',
+        chunkSize: 512,
+      });
+
+      const ctx = await storageContextFromDefaults({ vectorStore: pcvs });
+
+      return await VectorStoreIndex.fromDocuments([document], {
+        storageContext: ctx,
+      });
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  public async query(query: string) {
     const pcvs = new PineconeVectorStore({
       indexName: 'sources',
-      namespace: nameSpace,
+      namespace: 'buffers',
       chunkSize: 512,
     });
+
     const index = await VectorStoreIndex.fromVectorStore(pcvs);
 
     return index.asQueryEngine().query({ query });
   }
+
+  //TODO: suppoort metadata filter in llamaIndexTS as pinecone supports it
+  public async queryDocuments(documentIds: string[], query: string) {
+    const pcvs = new PineconeVectorStore({
+      indexName: 'sources',
+      namespace: 'buffers',
+      chunkSize: 512,
+    });
+
+    const index = await VectorStoreIndex.fromVectorStore(pcvs);
+
+    const filters: MetadataFilters = {
+      filters: [
+        {
+          key: 'custom_id',
+          value: documentIds,
+          operator: 'in',
+        },
+      ],
+    };
+
+    const queryEngine = index.asQueryEngine({
+      preFilters: filters,
+      similarityTopK: 5,
+    });
+
+    return queryEngine.query({ query });
+  }
+
+  async listSources() {}
 
   public async purgeNamespace(nameSpace: string) {
     try {
@@ -93,4 +165,4 @@ class indexController {
   }
 }
 
-export { indexController };
+export { VectorIndex };

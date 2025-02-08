@@ -12,7 +12,6 @@ import {
 import { TextFileReader } from '@llamaindex/readers/text';
 
 const STORAGE_DIRECTORY = join(process.cwd(), 'public/uploads');
-type blobCategory = 'pdf' | 'txt';
 type VectorStoreResponseType = {
   response: string | null;
   sourceNodes: NodeWithScore<Metadata>[] | undefined;
@@ -24,11 +23,7 @@ const ensureDir = (path: string) => {
   });
 };
 
-const saveToFileSystem = async (
-  buffer: Buffer,
-  category: blobCategory,
-  extension: string
-) => {
+const saveToFileSystem = async (buffer: Buffer, extension: string) => {
   try {
     const uploadDir = join(process.cwd(), `${STORAGE_DIRECTORY}`);
     ensureDir(uploadDir);
@@ -37,13 +32,11 @@ const saveToFileSystem = async (
     const filePath = join(uploadDir, fileName);
     await writeFile(filePath, buffer);
 
-    return `/uploads/${category}/${fileName}`;
+    return `/uploads/${fileName}`;
   } catch (error) {
     console.log('error', error);
   }
 };
-
-const saveToPineCone = async () => {};
 
 const saveToBlobStorage = async () => {
   throw new Error(
