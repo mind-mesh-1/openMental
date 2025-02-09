@@ -21,7 +21,7 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
-  const { visibleMessages } = useCopilotChat();
+
 
   useCopilotReadable({
     description: 'The state of the todo list',

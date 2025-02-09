@@ -19,6 +19,6 @@ controller
     documentIds,
     'what is the relationship between paul graham and sam altman'
   )
-  .then(({ sourceNodes, message }) => {
+  .then(({ message }) => {
     console.log(message);
   });

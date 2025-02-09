@@ -63,7 +63,7 @@ class KnowledgeIndex {
     const fileList = await getSourceFilenames(absoluteSourceDir);
     const count = fileList.length;
     console.log(`Found ${count} files`);
-    const fileName = '';
+
     try {
       const rdr = new SimpleDirectoryReader(callback);
       const docs = await rdr.loadData({ directoryPath: absoluteSourceDir });

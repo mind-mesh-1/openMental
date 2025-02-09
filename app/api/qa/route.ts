@@ -18,7 +18,7 @@ export async function POST(req: QueryRequest) {
     console.log(response);
 
     return NextResponse.json(response);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to process question' },
       { status: 500 }
