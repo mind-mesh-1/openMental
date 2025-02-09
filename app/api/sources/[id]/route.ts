@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dotenv from 'dotenv';
 import pg from 'pg';
+import { KnowledgeIndex } from '@/app/dao/knowledgeIndex';
 
 dotenv.config();
 
@@ -36,10 +37,10 @@ const pool = new Pool({
 //   }
 // }
 
-export async function GET(
+const GET = async (
   request: NextRequest,
   context: { params: { id: string } }
-) {
+) => {
   const client = await pool.connect();
   try {
     const { id } = context.params;
@@ -70,4 +71,51 @@ export async function GET(
   } finally {
     client.release();
   }
-}
+};
+
+const DELETE = async (
+  request: NextRequest,
+  context: { params: { id: string } }
+) => {
+  const client = await pool.connect();
+
+  try {
+    const { id } = await context.params;
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Source ID is required' },
+        { status: 400 }
+      );
+    }
+
+    console.log('id', id);
+
+    const result = await client.query(
+      'DELETE FROM uploads WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'File not found' }, { status: 404 });
+    }
+
+    const knowledgeIndex = new KnowledgeIndex('sources');
+
+    await knowledgeIndex.hardDeleteSource(id);
+
+    return NextResponse.json(
+      { message: 'File deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete file' },
+      { status: 500 }
+    );
+  } finally {
+    client.release();
+  }
+};
+
+export { GET, DELETE };

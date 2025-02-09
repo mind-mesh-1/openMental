@@ -1,3 +1,3 @@
-import SourceList from '@/components/sources/SourceList';
+import Sources from '@/components/sources/SourceList';
 
-export { SourceList };
+export { Sources };

@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
 import './globals.css';
 import { Suspense } from 'react';
 
@@ -19,6 +22,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Suspense>{children}</Suspense>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

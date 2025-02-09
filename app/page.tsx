@@ -5,7 +5,7 @@ import TasksList from '@/components/TasksList';
 import { TasksProvider } from '@/lib/hooks/use-tasks';
 import { CopilotKit } from '@copilotkit/react-core';
 import { CopilotChat } from '@copilotkit/react-ui';
-import { SourceList } from '@/components/sources';
+import { Sources } from '@/components/sources';
 import { SourcesProvider } from '@/lib/hooks/use-sources';
 import '@copilotkit/react-ui/styles.css';
 import '@radix-ui/themes/styles.css';
@@ -25,7 +25,7 @@ export default function Home() {
         <CopilotKit runtimeUrl="api/copilotkit">
           <div className="flex-1 border border-red-500 p-4 m-2 rounded">
             <SourcesProvider>
-              <SourceList />
+              <Sources />
             </SourcesProvider>
           </div>
           <div className="flex-1 border border-blue-500 p-4 m-2 rounded flex flex-col">

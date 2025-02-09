@@ -1,11 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { KnowledgeIndex } from '@/app/dao/knowledgeIndex';
+import { QueryRequest } from '@/app/api/request.type';
 
-interface QuerySourceNextRequest extends NextRequest {
-  json: () => Promise<{ sourceIds: string[]; question: string }>;
-}
-
-export async function POST(req: QuerySourceNextRequest) {
+export async function POST(req: QueryRequest) {
   try {
     const data = await req.json();
     const { sourceIds, question } = data;

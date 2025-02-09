@@ -85,7 +85,7 @@ class KnowledgeIndex {
   }
 
   //TODO: what are different indexing strategies from llamaIndex
-  public async uploadToPineCone(
+  public async uploadToIndex(
     sourceId: string,
     buffer: Buffer<ArrayBufferLike>
   ): Promise<VectorStoreIndex | undefined> {
@@ -181,12 +181,23 @@ class KnowledgeIndex {
     return queryEngine.query({ query: 'summarize the article' });
   }
 
-  public async purgeNamespace(nameSpace: string) {
+  async hardDeleteSource(source_id: string) {
+    try {
+      await this.pc_index.deleteMany({
+        source_id: { $eq: source_id },
+      });
+    } catch (error) {
+      console.error('Error deleting source:', error);
+      throw error;
+    }
+  }
+
+  async hardDeleteNameSpace(nameSpace: string) {
     try {
       await this.pc_index.namespace(nameSpace).deleteAll();
       console.log(`Deleted all records in namespace ${nameSpace}`);
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 }

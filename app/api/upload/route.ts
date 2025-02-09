@@ -64,7 +64,7 @@ const POST = async (req: NextRequest) => {
       console.log('upload to psql complete');
 
       const idx = new KnowledgeIndex('sources');
-      const resp = await idx.uploadToPineCone(source_id, buffer);
+      const resp = await idx.uploadToIndex(source_id, buffer);
 
       console.log('upload to pinecone complete', resp);
 
