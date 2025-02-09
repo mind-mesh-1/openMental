@@ -42,7 +42,6 @@ const nextConfig = {
       fullUrl: true,
     },
   },
-
 };
 
 export default withLlamaIndex(nextConfig);

@@ -41,7 +41,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchSources();
   }, []);
-  const uploadSource = async (source: Source) => {
+  const uploadSource = async () => {
     try {
       const response = await fetch('/api/sources');
       if (!response.ok) {

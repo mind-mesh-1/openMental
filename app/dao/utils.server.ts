@@ -91,7 +91,7 @@ const chatWithFiles = async (
     const index = await VectorStoreIndex.fromDocuments(documents);
     const queryEngine = index.asQueryEngine();
 
-    const { response, message, sourceNodes } = await queryEngine.query({
+    const { response, sourceNodes } = await queryEngine.query({
       query: query,
     });
 
