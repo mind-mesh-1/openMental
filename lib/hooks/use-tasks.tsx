@@ -1,6 +1,6 @@
 import {
   useCopilotAction,
-  useCopilotChat,
+  // useCopilotChat,
   useCopilotReadable,
 } from '@copilotkit/react-core';
 import { createContext, useContext, useState, ReactNode } from 'react';
@@ -20,8 +20,6 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
-
-
 
   useCopilotReadable({
     description: 'The state of the todo list',

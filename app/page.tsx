@@ -12,8 +12,6 @@ import '@radix-ui/themes/styles.css';
 import React from 'react';
 
 export default function Home() {
-
-    process.env.NEXT_PUBLIC_COPILOT_RUNTIME_ENDPOINT;
   // const COPILOT_CLOUD_PUBLIC_API_KEY =
   //   process.env.NEXT_PUBLIC_COPILOT_CLOUD_PUBLIC_API_KEY;
 
