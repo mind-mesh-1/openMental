@@ -39,11 +39,11 @@ const pool = new Pool({
 
 const GET = async (
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) => {
   const client = await pool.connect();
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     if (!id) {
       return NextResponse.json(
         { error: 'Source ID is required' },
@@ -75,7 +75,7 @@ const GET = async (
 
 const DELETE = async (
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) => {
   const client = await pool.connect();
 
