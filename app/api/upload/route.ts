@@ -32,14 +32,20 @@ const saveToFileSystem = async (buffer: Buffer, extension: string) => {
   }
 };
 
-const POST = async (req: NextRequest) => {
+const POST = async (
+  req: NextRequest,
+  context: { params: { fileName: string } }
+) => {
   try {
-    const buffer = Buffer.from(await req.arrayBuffer());
+    const formData = await req.formData();
+    console.log(formData);
+    const filename = formData.get('fileName') as string;
+    const file = formData.get('file') as File;
+    // const clientTime = formData.get('clientTime') as string;
 
-    const filePath = await saveToFileSystem(buffer, 'txt');
+    const buffer = Buffer.from(await file.arrayBuffer()); // const filePath = await saveToFileSystem(buffer, 'txt');
 
     const source_id = uuidv4();
-    const filename = filePath?.split('/').pop();
     const contentType = 'text/plain';
     const size = buffer.length;
     const uploadedAt = new Date();
@@ -64,14 +70,17 @@ const POST = async (req: NextRequest) => {
       console.log('upload to psql complete');
 
       const idx = new KnowledgeIndex('sources');
-      const resp = await idx.uploadToIndex(source_id, buffer);
+      const resp = await idx.uploadToIndex(
+        { sourceId: source_id, sourceName: filename },
+        buffer
+      );
 
       console.log('upload to pinecone complete', resp);
 
       return NextResponse.json(
         {
           message: 'File uploaded successfully',
-          path: filePath,
+          path: 'psql',
         },
         { status: 200 }
       );

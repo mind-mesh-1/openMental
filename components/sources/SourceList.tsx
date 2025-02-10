@@ -1,10 +1,14 @@
-import { AddSourceButton } from '@/components/sources/AddSource';
 import { SourceViewer } from '@/components/sources/SourceViewer';
 import { useSources } from '@/lib/hooks/use-sources';
 import Uploady from '@rpldy/uploady';
-import { useState } from 'react';
-const UPLOAD_ENDPOINT = process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT;
 
+import { useState } from 'react';
+import UploadSource from '@/components/sources/UploadSource';
+import { useCopilotChat } from '@copilotkit/react-core';
+const UPLOAD_ENDPOINT = process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT;
+type AgentState = {
+  count: number;
+};
 const SourceList = () => {
   const { sources, toggleSource } = useSources();
   const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
@@ -14,6 +18,39 @@ const SourceList = () => {
   const [viewType, setViewType] = useState<'sourceList' | 'sourceDetail'>(
     'sourceList'
   );
+
+  const {
+    // visibleMessages, // An array of messages that are currently visible in the chat.
+    // appendMessage, // A function to append a message to the chat.
+    setMessages, // A function to set the messages in the chat.
+    // deleteMessage, // A function to delete a message from the chat.
+    // reloadMessages, // A function to reload the messages from the API.
+    // stopGeneration, // A function to stop the generation of the next message.
+    // isLoading, // A boolean indicating if the chat is loading.
+  } = useCopilotChat();
+
+  // useCopilotChatSuggestions({
+  //   instructions: `answer questions only based on following active sources: ${JSON.stringify(sources.filter((el) => el.isActive))}`,
+  // });
+
+  // const agent = useCoAgent<AgentState>({
+  //   name: 'my-agent',
+  //   initialState: {
+  //     count: 0,
+  //   },
+  // });
+  // const {
+  //   name, // The name of the agent currently being used.
+  //   nodeName, // The name of the current LangGraph node.
+  //   state, // The current state of the agent.
+  //   setState, // A function to update the state of the agent.
+  //   running, // A boolean indicating if the agent is currently running.
+  //   start, // A function to start the agent.
+  //   stop, // A function to stop the agent.
+  //   run, // A function to re-run the agent. Takes a HintFunction to inform the agent why it is being re-run.
+  // } = agent;
+
+  // console.log(name, nodeName, state);
 
   const handleSourceClick = async (sourceId: string) => {
     setSelectedSourceId(sourceId);
@@ -58,8 +95,14 @@ const SourceList = () => {
           <div className="text-lg font-semibold mb-4">Sources</div>
 
           <Uploady destination={{ url: UPLOAD_ENDPOINT }}>
-            <AddSourceButton />
+            <UploadSource />
           </Uploady>
+
+          <div>
+            <button onClick={() => setMessages([])} className="mt-4">
+              reset chat
+            </button>
+          </div>
 
           <div className="mt-4 space-y-2">
             {sources.map((source) => (

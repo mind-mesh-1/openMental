@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
+import { renderCitations } from '@/components/Citation';
 
 type Source = {
   id: string;
@@ -23,24 +24,8 @@ const SourcesContext = React.createContext<SourceContextType | undefined>(
 );
 
 const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [sources, setSources] = React.useState<Source[]>([]);
+  const [sourcesState, setSourcesState] = React.useState<Source[]>([]);
 
-  React.useEffect(() => {
-    const fetchSources = async () => {
-      try {
-        const response = await fetch('/api/sources');
-        if (!response.ok) {
-          throw new Error('Failed to fetch sources');
-        }
-        const data = await response.json();
-        setSources(data.sources);
-      } catch (error) {
-        console.error('Error fetching sources:', error);
-      }
-    };
-
-    fetchSources();
-  }, []);
   const uploadSource = async () => {
     try {
       const response = await fetch('/api/sources');
@@ -48,7 +33,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error('Failed to fetch sources');
       }
       const data = await response.json();
-      setSources(data.sources);
+      setSourcesState(data.sources);
     } catch (error) {
       console.error('Error refreshing sources:', error);
     }
@@ -59,7 +44,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const toggleSource = (source_id: string) => {
-    setSources((prev) =>
+    setSourcesState((prev) =>
       prev.map((source) =>
         source.id === source_id
           ? { ...source, isActive: !source.isActive }
@@ -69,18 +54,19 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const deleteSource = (source_id: string) => {
-    setSources((prev) => prev.filter((source) => source.id !== source_id));
+    setSourcesState((prev) => prev.filter((source) => source.id !== source_id));
   };
 
   useCopilotReadable({
-    description: 'The state of the sources, inactive tasks should ignored',
-    value: JSON.stringify(sources),
+    description: 'The state of the sources, inactive sources are not included',
+    value: JSON.stringify(sourcesState),
   });
 
   useCopilotAction({
     name: 'analyzeSources',
-    available: 'remote',
-    description: 'answer questions based selected sources',
+    available: 'enabled',
+    description: 'answer question directly based on selected sources',
+    followUp: false,
     parameters: [
       {
         name: 'question',
@@ -89,36 +75,74 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
         required: true,
       },
     ],
-    handler: ({ question }) => {
-      console.log(
-        'analyzing source',
-        sources.filter((el) => el.isActive),
-        question
-      );
-    },
-  });
+    handler: async ({ question }) => {
+      const sources = sourcesState.filter((el) => el.isActive);
 
-  useCopilotAction({
-    name: 'summarizeSource',
-    available: 'remote',
-    description: 'summarize the active source',
-    parameters: [
-      {
-        name: 'source_id',
-        type: 'string',
-        description: 'The id of the source to summarize',
-        required: true,
-      },
-    ],
-    handler: ({ source_id }) => {
-      console.log('summarizing source', source_id);
+      console.log('analyzing sources', sources, question);
+
+      const resp = await fetch('/api/qa', {
+        method: 'POST',
+        body: JSON.stringify({
+          sourceIds: sources.map((el) => el.id),
+          question,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return await resp.json();
+    },
+
+    render: ({ status, result }) => {
+      if (status === 'executing' || status === 'inProgress') {
+        return 'loading';
+      } else if (status === 'complete') {
+        return renderCitations(result.citations);
+      } else {
+        return <div className="text-red-500">No meeting found</div>;
+      }
     },
   });
+  //
+  // useCopilotAction({
+  //   name: 'summarizeSource',
+  //   available: 'remote',
+  //   description: 'summarize the active source, include details of citations',
+  //   parameters: [
+  //     {
+  //       name: 'source_id',
+  //       type: 'string',
+  //       description: 'The id of the source to summarize',
+  //       required: true,
+  //     },
+  //   ],
+  //   handler: ({ source_id }) => {
+  //     console.log('summarizing source', source_id);
+  //   },
+  // });
+
+  useEffect(() => {
+    const fetchSources = async () => {
+      try {
+        const response = await fetch('/api/sources');
+        if (!response.ok) {
+          throw new Error('Failed to fetch sources');
+        }
+        const data = await response.json();
+        setSourcesState(data.sources);
+      } catch (error) {
+        console.error('Error fetching sources:', error);
+      }
+    };
+
+    fetchSources();
+  }, []);
 
   return (
     <SourcesContext.Provider
       value={{
-        sources,
+        sources: sourcesState,
         uploadSource,
         viewSource,
         toggleSource,

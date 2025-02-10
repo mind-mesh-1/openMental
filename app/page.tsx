@@ -15,7 +15,7 @@ export default function Home() {
   // const COPILOT_CLOUD_PUBLIC_API_KEY =
   //   process.env.NEXT_PUBLIC_COPILOT_CLOUD_PUBLIC_API_KEY;
 
-  const [studioCollapsed, setStudioCollapsed] = React.useState(false);
+  const [studioCollapsed, setStudioCollapsed] = React.useState(true);
 
   return (
     <div className="flex h-screen border">

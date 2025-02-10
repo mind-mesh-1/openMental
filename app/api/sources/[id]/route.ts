@@ -88,7 +88,9 @@ const DELETE = async (
       );
     }
 
-    console.log('id', id);
+    const knowledgeIndex = new KnowledgeIndex('sources');
+
+    await knowledgeIndex.hardDeleteSource(id);
 
     const result = await client.query(
       'DELETE FROM uploads WHERE id = $1 RETURNING *',
@@ -98,10 +100,6 @@ const DELETE = async (
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
-
-    const knowledgeIndex = new KnowledgeIndex('sources');
-
-    await knowledgeIndex.hardDeleteSource(id);
 
     return NextResponse.json(
       { message: 'File deleted successfully' },

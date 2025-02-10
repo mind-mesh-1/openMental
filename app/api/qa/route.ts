@@ -6,18 +6,21 @@ export async function POST(req: QueryRequest) {
   try {
     const data = await req.json();
     const { sourceIds, question } = data;
-
-    console.log('sourceIds', sourceIds, question);
-
     // const { response } = await chatWithFiles(question, sourceIds);
 
     const idx = new KnowledgeIndex('sources');
 
-    const response = await idx.queryDocuments(sourceIds, question);
+    const engineResponse = await idx.queryDocuments(sourceIds, question);
 
-    console.log(response);
+    const resp = {
+      answer: engineResponse.response,
+      citations: engineResponse.sourceNodes?.map((nodeWithScore) => ({
+        citationId: nodeWithScore.node.id_,
+        score: nodeWithScore.score,
+      })),
+    };
 
-    return NextResponse.json(response);
+    return NextResponse.json(resp);
   } catch {
     return NextResponse.json(
       { error: 'Failed to process question' },

@@ -11,7 +11,8 @@ import {
 
 import { TextFileReader } from '@llamaindex/readers/text';
 
-const STORAGE_DIRECTORY = join(process.cwd(), 'public/uploads');
+const STORAGE_DIRECTORY =
+  '/home/jingyi/WebstormProjects/copilot-v2/public/uploads';
 type VectorStoreResponseType = {
   response: string | null;
   sourceNodes: NodeWithScore<Metadata>[] | undefined;
@@ -104,4 +105,4 @@ const chatWithFiles = async (
   }
 };
 
-export { saveToFileSystem, saveToBlobStorage, chatWithFiles };
+export { saveToFileSystem, saveToBlobStorage, chatWithFiles, loadDocuments };
