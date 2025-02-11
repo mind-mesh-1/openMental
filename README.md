@@ -11,9 +11,9 @@ When an end event is reached, a closing </span> is inserted.
 Resulting HTML:
 The final HTML string shows nested <span> elements for overlapping chunks. For example, if:
 
-Chunk 1 covers index 0–56,
-Chunk 2 covers index 40–100, and
-Chunk 3 covers index 90–140,
+- Chunk 1 covers index 0–56,
+- Chunk 2 covers index 40–100, and
+- Chunk 3 covers index 90–140,
 the resulting HTML will nest the spans appropriately so that:
 
 The outer span (for chunk 1) wraps text from index 0 to 56 and continues after chunk 2,
