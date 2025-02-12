@@ -6,6 +6,7 @@ import {
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { defaultTasks } from '../default-tasks';
 import { Task, TaskStatus } from '../tasks.types';
+import { useAuditAction } from '@/lib/hooks/use-audit';
 
 let nextId = defaultTasks.length + 1;
 
@@ -20,6 +21,7 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
+  const { logAction } = useAuditAction();
 
   useCopilotReadable({
     description: 'The state of the todo list',
@@ -38,6 +40,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
       },
     ],
     handler: ({ title }) => {
+      logAction(`copilot addTask ${title}`, 'task');
       addTask(title);
     },
   });
@@ -54,6 +57,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
       },
     ],
     handler: ({ id }) => {
+      logAction(`copilot deleteTask ${id}`, 'task');
       deleteTask(id);
     },
   });
@@ -77,6 +81,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
       },
     ],
     handler: ({ id, status }) => {
+      logAction(`copilot setTaskStatus ${id} to ${status}`, 'task');
       setTaskStatus(id, status);
     },
   });

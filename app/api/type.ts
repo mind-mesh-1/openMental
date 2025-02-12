@@ -6,8 +6,5 @@ type FullCitationType = {
   sourceName: string;
 };
 
-type ShortCitationType = Omit<
-  FullCitationType,
-  'text' | 'sourceId' | 'sourceName'
->;
+type ShortCitationType = Omit<FullCitationType, 'text'>;
 export { type FullCitationType, type ShortCitationType };

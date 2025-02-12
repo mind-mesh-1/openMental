@@ -17,6 +17,7 @@ export async function POST(req: QueryRequest) {
       citations: engineResponse.sourceNodes?.map((nodeWithScore) => ({
         citationId: nodeWithScore.node.id_,
         score: nodeWithScore.score,
+        sourceId: nodeWithScore.node.metadata.source_id,
       })),
     };
 

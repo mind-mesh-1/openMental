@@ -3,12 +3,15 @@
 import React, { useEffect } from 'react';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 import { renderCitations } from '@/components/Citation';
+import { ShortCitationType } from '@/app/api/type';
+import { useAuditAction } from '@/lib/hooks/use-audit';
 
 type Source = {
   id: string;
   name: string;
   fileType: string;
   isActive: boolean;
+  citations?: ShortCitationType[];
 };
 
 type SourceContextType = {
@@ -26,6 +29,7 @@ const SourcesContext = React.createContext<SourceContextType | undefined>(
 const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   const [sourcesState, setSourcesState] = React.useState<Source[]>([]);
 
+  const { logAction } = useAuditAction();
   const uploadSource = async () => {
     try {
       const response = await fetch('/api/sources');
@@ -58,14 +62,14 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useCopilotReadable({
-    description: 'The state of the sources, inactive sources are not included',
+    description: 'The state of the sources',
     value: JSON.stringify(sourcesState),
   });
 
   useCopilotAction({
-    name: 'analyzeSources',
+    name: 'analyzeActiveSources',
     available: 'enabled',
-    description: 'answer question directly based on selected sources',
+    description: 'answer question directly based on active sources',
     followUp: false,
     parameters: [
       {
@@ -77,8 +81,11 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
     ],
     handler: async ({ question }) => {
       const sources = sourcesState.filter((el) => el.isActive);
-
-      console.log('analyzing sources', sources, question);
+      const sourceIds = sources.map((el) => el.id);
+      logAction(
+        `copilot analyzeActiveSources ${question} with with reference ${sourceIds} `,
+        'QA'
+      );
 
       const resp = await fetch('/api/qa', {
         method: 'POST',
@@ -104,6 +111,36 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
       }
     },
   });
+
+  useCopilotAction({
+    name: 'unCheckAllSources',
+    available: 'enabled',
+    description:
+      'Uncheck all active sources if there are any, upon user request',
+    followUp: false,
+    parameters: [],
+    handler: async () => {
+      logAction('COPILOT unchecked all sources', 'SOURCES');
+      setSourcesState((prev) =>
+        prev.map((source) => ({ ...source, isActive: false }))
+      );
+    },
+  });
+
+  useCopilotAction({
+    name: 'checkAllSources',
+    available: 'enabled',
+    description: 'Check all active sources upon user request',
+    followUp: false,
+    parameters: [],
+    handler: async () => {
+      logAction('COPILOT checked all sources', 'SOURCES');
+      setSourcesState((prev) =>
+        prev.map((source) => ({ ...source, isActive: true }))
+      );
+    },
+  });
+
   //
   // useCopilotAction({
   //   name: 'summarizeSource',
