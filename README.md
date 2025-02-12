@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Milestone 1: parse the document into HTML format with proper attribute, store these are meta data in llamaIndex, so can back reference 
 
-## Getting Started
 
-First, run the development server:
+- Event Creation:For each chunk, two events are generated: one for the start (opening tag) and one for the end (closing tag).
+Event Sorting:
+All events are sorted by their character position in the full text. When events share the same position, start events are prioritized over end events.
+HTML Construction:
+The code iterates over the full text and inserts the appropriate HTML tags at each event point.
+When a start event is encountered, an opening <span> with data-index is inserted.
+When an end event is reached, a closing </span> is inserted.
+Resulting HTML:
+The final HTML string shows nested <span> elements for overlapping chunks. For example, if:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Chunk 1 covers index 0–56,
+- Chunk 2 covers index 40–100, and
+- Chunk 3 covers index 90–140,
+the resulting HTML will nest the spans appropriately so that:
+
+The outer span (for chunk 1) wraps text from index 0 to 56 and continues after chunk 2,
+The inner spans (for chunks 2 and 3) are nested according to their overlapping regions.
+A sample compact output might look like:
+
+```
+<span class="highlight" data-index="1">Lorem ipsum dolor sit amet, consectetur <span class="highlight" data-index="2">adipiscing elit. </span>Sed do eiusmod tempor incididunt <span class="highlight" data-index="3">ut labore</span> et dolore magna aliqua. Ut enim ad</span> minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Milestone 2: mock up agent response, brainstorm on intuitive canvas UI interactions with CopilotKit 
+# Milestone 3: benchmark against googleLLM, using different RAG strategies (hybrid search, knowledge graph, agent synthesis)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Milestone 2: mock up agent response, brainstorm on intuitive canvas UI interactions with CopilotKit 
+# Milestone 3: benchmark against googleLLM, using different RAG strategies (hybrid search, knowledge graph, agent synthesis)
