@@ -1,5 +1,6 @@
 # Milestone 1: parse the document into HTML format with proper attribute, store these are meta data in llamaIndex, so can back reference 
 
+![Coverage Badge](https://img.shields.io/codecov/c/github/jzhao62/notebook-llm-copilot/main.svg)
 
 - Event Creation:For each chunk, two events are generated: one for the start (opening tag) and one for the end (closing tag).
 Event Sorting:
