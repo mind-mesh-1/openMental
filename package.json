@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "next lint && prettier --check .",
     "prettify": "prettier --write .",
-    "test": "NODE_ENV=test vitest --run"
+    "test": "NODE_ENV=test vitest --run && pytest api/test_index.py"
   },
   "husky": {
     "hooks": {
