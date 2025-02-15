@@ -4,8 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start-copilot-runtime": "tsx ./server.ts",
-    "start-dev": "concurrently \"next dev\"",
+    "fastapi-dev": "python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python3 -m uvicorn api.index:app --reload",
+    "next-dev": "next dev",
+    "start dev": "concurrently \"npm run next-dev\" \"npm run fastapi-dev\"",
+
     "build": "next build",
     "start": "next start",
     "lint": "next lint && prettier --check .",

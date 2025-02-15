@@ -9,6 +9,9 @@ const UPLOAD_ENDPOINT = process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT;
 type AgentState = {
   count: number;
 };
+
+const SOURCE_URL = process.env.NEXT_PUBLIC_SOURCE_URL as string;
+
 const SourceList = () => {
   const { sources, toggleSource } = useSources();
   const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
@@ -58,7 +61,7 @@ const SourceList = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/sources/${sourceId}`);
+      const response = await fetch(`${SOURCE_URL}/${sourceId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch source content');
       }
@@ -75,7 +78,7 @@ const SourceList = () => {
 
   const handleDeleteSource = async (sourceId: string) => {
     try {
-      const response = await fetch(`/api/sources/${sourceId}`, {
+      const response = await fetch(`${SOURCE_URL}/${sourceId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

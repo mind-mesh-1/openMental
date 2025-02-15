@@ -3,8 +3,11 @@
 import React, { useEffect } from 'react';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 import { renderCitations } from '@/components/Citation';
-import { ShortCitationType } from '@/app/api/type';
 import { useAuditAction } from '@/lib/hooks/use-audit';
+import { ShortCitationType } from '@/app/api/basic/type';
+
+const SOURCE_URL = process.env.NEXT_PUBLIC_SOURCE_URL as string;
+const QA_URL = process.env.NEXT_PUBLIC_QA_URL as string;
 
 type Source = {
   id: string;
@@ -32,7 +35,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   const { logAction } = useAuditAction();
   const uploadSource = async () => {
     try {
-      const response = await fetch('/api/sources');
+      const response = await fetch(SOURCE_URL);
       if (!response.ok) {
         throw new Error('Failed to fetch sources');
       }
@@ -87,7 +90,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
         'QA'
       );
 
-      const resp = await fetch('/api/qa', {
+      const resp = await fetch(QA_URL, {
         method: 'POST',
         body: JSON.stringify({
           sourceIds: sources.map((el) => el.id),
@@ -162,7 +165,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        const response = await fetch('/api/sources');
+        const response = await fetch(SOURCE_URL);
         if (!response.ok) {
           throw new Error('Failed to fetch sources');
         }
