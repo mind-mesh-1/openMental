@@ -1,6 +1,7 @@
 # Project Title
 
 ![Coverage Badge](https://img.shields.io/codecov/c/github/jzhao62/notebook-llm-copilot/main.svg)
+![Build Status](https://github.com/jzhao62/notebook-llm-copilot/actions/workflows/test-coverage.yml/badge.svg)
 
 ## Overview
 
