@@ -1,31 +1,33 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route('/api', methods=['POST'])
-def handle_request():
+class RequestBody(BaseModel):
+    action: str
+    params: dict
+
+@app.post("/api")
+async def handle_request(body: RequestBody):
     action_handlers = {
-    'analyzeSources': lambda source_ids, question: analyze_sources(source_ids, question),
-    'summarizeSource': lambda source_id: summarize_source(source_id)
-}
+        'analyzeSources': analyze_sources,
+        'summarizeSource': summarize_source
+    }
 
-    data = request.json
-    action = data.get('action')
-    params = data.get('params', {})
+    action = body.action
+    params = body.params
 
     if action in action_handlers:
-        result = action_handlers[action](**params)
-        return jsonify(result)
+        return action_handlers[action](**params)
     else:
-        return jsonify({'error': 'Unknown action'}), 400
+        raise HTTPException(status_code=400, detail="Unknown action")
 
-def analyze_sources(source_ids, question):
+
+def analyze_sources(source_ids: str, question: str):
     # Placeholder for analyzeSources logic
     return {'message': 'analyzeSources executed'}
 
-def summarize_source(source_id):
+
+def summarize_source(source_id: str):
     # Placeholder for summarizeSource logic
     return {'message': 'summarizeSource executed'}
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=53202)
