@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { KnowledgeIndex } from '@/app/dao/knowledgeIndex';
-import { QueryRequest } from '@/app/api/request.type';
+import { QueryRequest } from '@/app/api/basic/request.type';
 
 export async function POST(req: QueryRequest) {
   try {

@@ -1,0 +1,41 @@
+[tool.black]
+# Maximum line length for Black. This should match the Ruff setting to avoid conflicts.
+line-length = 88
+# Target Python versions for formatting.
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+# Patterns to include (regex) for Black to process.# Patterns to include (regex) for Black to process.
+include = '\.pyi?$'
+# Files or directories to exclude from formatting.
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+# Maximum line length for Ruff. This should align with Black's setting.
+line-length = 88
+# Directories or files to exclude from linting.
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+]
+# List of error codes or rules to ignore. E501 (line too long) is often ignored since Black handles line wrapping.
+ignore = ["E501"]
+select = ["F841"]
+# Additional configuration for selecting or extending rule sets:
+# For example, you can specify which error/warning codes to select.
+# select = ["A", "B", "C", "D", "E", "F", "W"]
+# or extend the selection with:
+# extend-select = ["I"]
