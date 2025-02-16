@@ -1,13 +1,12 @@
 import unittest
+from fastapi.testclient import TestClient
 from app.api.index import app
 
-class ApiTestCase(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
+client = TestClient(app)
 
+class ApiTestCase(unittest.TestCase):
     def test_analyze_sources(self):
-        response = self.app.post('/api', json={
+        response = client.post('/api', json={
             'action': 'analyzeSources',
             'params': {
                 'source_ids': '1,2,3',
@@ -15,24 +14,25 @@ class ApiTestCase(unittest.TestCase):
             }
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn('analyzeSources executed', response.get_data(as_text=True))
+        self.assertIn('analyzeSources executed', response.json()['message'])
 
     def test_summarize_source(self):
-        response = self.app.post('/api', json={
+        response = client.post('/api', json={
             'action': 'summarizeSource',
             'params': {
                 'source_id': '1'
             }
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn('summarizeSource executed', response.get_data(as_text=True))
+        self.assertIn('summarizeSource executed', response.json()['message'])
 
     def test_unknown_action(self):
-        response = self.app.post('/api', json={
-            'action': 'unknownAction'
+        response = client.post('/api', json={
+            'action': 'unknownAction',
+            'params': {}
         })
         self.assertEqual(response.status_code, 400)
-        self.assertIn('Unknown action', response.get_data(as_text=True))
+        self.assertIn('Unknown action', response.json()['detail'])
 
 if __name__ == '__main__':
     unittest.main()
