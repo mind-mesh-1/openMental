@@ -6,13 +6,34 @@ import os
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List
 
 load_dotenv()
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 
 
+class RequestBody(BaseModel):
+    action: str
+    params: dict
+
+
 class QueryRequest(BaseModel):
     query: str
+
+
+class AnalyzeSourcesRequest(BaseModel):
+    source_ids: List[str]
+    question: str
+
+
+@app.post("/api/py/analyze_sources")
+def analyze_sources(request: AnalyzeSourcesRequest):
+    source_ids = request.source_ids
+    question = request.question
+    # Placeholder for analyzeSources logic
+    return {"message": "analyzeSources executed"}
 
 
 @app.get("/api/py/helloFastApi")

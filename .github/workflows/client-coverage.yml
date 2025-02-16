@@ -1,11 +1,11 @@
-name: JS/TS Coverage
+name: client coverage
 
 on:
   push
 
 jobs:
   test:
-    name: Run tests and collect coverage
+    name: Run tests and collect coverage for client side code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
