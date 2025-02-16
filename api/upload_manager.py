@@ -53,7 +53,7 @@ class PostgreSQLStorageHandler(StorageHandler):
         source_id = str(uuid.uuid4())
         content_type = "text/plain"
         size = len(buffer)
-        uploaded_at = datetime.datetime.utcnow()
+        uploaded_at = datetime.datetime.now(datetime.UTC)
 
         conn = await asyncpg.connect(self.database_url)
         try:
