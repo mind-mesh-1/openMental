@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install fastapi httpx asyncpg pinecone-client llama-index llama-index-vector-stores-pinecone
+        pip install -r requirements.txt
         
     - name: Run tests
       run: |
