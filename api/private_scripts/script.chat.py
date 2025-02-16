@@ -6,7 +6,7 @@ from llama_index.vector_stores.pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec
 from pinecone.grpc import PineconeGRPC
 
-api_key = "pcsk_7Y2eNd_LGg2CobN6dQumFcaTJt6vcfC7aHynRmbNZ9fH6vTbmA874itF8onmX5fJcf76Wy"
+api_key = ""
 from dotenv import load_dotenv
 
 load_dotenv()
