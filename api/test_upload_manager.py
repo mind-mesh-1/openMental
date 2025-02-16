@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from api.upload_manager import (
+from upload_manager import (
     PostgreSQLStorageHandler,
     LlamaIndexStorageHandler,
     upload_file,
@@ -53,8 +53,8 @@ class TestPostgreSQLStorageHandler(unittest.IsolatedAsyncioTestCase):
 
 
 class TestUploadFileFunction(unittest.IsolatedAsyncioTestCase):
-    @patch("api.upload_manager.PostgreSQLStorageHandler.save", new_callable=AsyncMock)
-    @patch("api.upload_manager.LlamaIndexStorageHandler.save", new_callable=AsyncMock)
+    @patch("upload_manager.PostgreSQLStorageHandler.save", new_callable=AsyncMock)
+    @patch("upload_manager.LlamaIndexStorageHandler.save", new_callable=AsyncMock)
     async def test_upload_file(self, mock_llama_save, mock_postgres_save):
         mock_postgres_save.return_value = None
         mock_llama_save.return_value = {"message": "File uploaded successfully"}

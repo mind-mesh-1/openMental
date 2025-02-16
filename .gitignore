@@ -42,3 +42,4 @@ next-env.d.ts
 .env
 
 /private_scripts/
+/api/__pycache__/

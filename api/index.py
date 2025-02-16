@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from pinecone.grpc import PineconeGRPC
 from pydantic import BaseModel
 
-from api.upload_manager import PostgreSQLStorageHandler, LlamaIndexStorageHandler
+from upload_manager import PostgreSQLStorageHandler, LlamaIndexStorageHandler
 
 load_dotenv()
 
