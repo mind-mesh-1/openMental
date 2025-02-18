@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import uuid
 from typing import List
 import datetime
@@ -12,6 +13,7 @@ from pydantic import BaseModel
 
 from upload_manager import PostgreSQLStorageHandler, LlamaIndexStorageHandler
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")

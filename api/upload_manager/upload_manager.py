@@ -18,6 +18,11 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 # TODO: for save, pydantic model for file type
 class StorageHandler(ABC):
+    """
+    Abstract base class for storage handlers.
+    Defines the interface for saving, removing, getting, and listing files.
+    """
+
     def __init__(self):
         self.next_handler = None
 
@@ -45,6 +50,10 @@ class StorageHandler(ABC):
 
 
 class PostgreSQLStorageHandler(StorageHandler):
+    """
+    PostgreSQL storage handler for saving, removing, getting, and listing files.
+    """
+
     def __init__(self, database_url: str):
         super().__init__()
         self.database_url = database_url
@@ -132,6 +141,10 @@ class PostgreSQLStorageHandler(StorageHandler):
 
 
 class LlamaIndexStorageHandler(StorageHandler):
+    """
+    LlamaIndex storage handler for saving, removing, getting, and listing files.
+    """
+
     def __init__(self, pinecone_api_key: str):
         super().__init__()
         self.pinecone_api_key = pinecone_api_key
