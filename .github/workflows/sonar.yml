@@ -1,5 +1,4 @@
-
-
+name: SonarQube Analysis
 
 on:
   push:
@@ -7,19 +6,27 @@ on:
   pull_request:
     branches: [ master ]
 
-name: SonarQube Analysis
-
 
 jobs:
-  sonarqube:
+  sonarQube:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          # Disabling shallow clones is recommended for improving the relevancy of reporting
-          fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4.1.0 # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install SonarQube Scanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux.zip
+          unzip sonar-scanner-cli-6.2.1.4610-linux.zip -d $HOME
+          export PATH=$HOME/sonar-scanner-6.2.1.4610-linux/bin:$PATH
+
+      - name: Run SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=jzhao62_notebook-llm-copilot \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
