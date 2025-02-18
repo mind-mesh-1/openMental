@@ -10,7 +10,7 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'], // Ensure this path is correct
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ['lcov'],
     },
     testTimeout: 5000, // Increase global timeout to 10000ms (10 seconds)
   },
