@@ -19,17 +19,33 @@ jobs:
         with:
           node-version: '21'
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install dependencies with pnpm
         run: pnpm install
 
-      - name: Test and coverage
+      - name: Test and coverage on JS/TS
         run: npx vitest run --coverage
 
-      - name: Run build
-        run: pnpm build
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Test and coverage on Python
+        run: |
+          cd api
+          python -m unittest discover -v
+#
+#      - name: Run build
+#        run: pnpm build
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
