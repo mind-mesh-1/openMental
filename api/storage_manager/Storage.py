@@ -3,6 +3,9 @@ import os
 import uuid
 
 from llama_index.core import Document, StorageContext, VectorStoreIndex
+from llama_index.core.ingestion import IngestionPipeline
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.vector_stores.pinecone import PineconeVectorStore
 import datetime
 import json
@@ -12,8 +15,8 @@ import uuid
 import asyncpg
 
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_INDEX = "sources"
+PINECONE_INDEX_NAME_SPACE = "test"
 
 
 class StorageHandler(ABC):
@@ -30,13 +33,18 @@ class StorageHandler(ABC):
     #     return handler
 
     @abstractmethod
+    def ping(self):
+
+        raise NotImplementedError("Ping method not implemented")
+
+    @abstractmethod
     async def save(self, filename: str, buffer: bytes):
         pass
         # if self.next_handler:
         #     return await self.next_handler.save(filename, buffer)
 
     @abstractmethod
-    async def remove(self, source_id: str):
+    async def adelete(self, source_id: str):
         pass
 
     @abstractmethod
@@ -53,32 +61,74 @@ class VectorStorage(StorageHandler):
     LlamaIndex storage handler for saving, removing, getting, and listing files.
     """
 
-    def __init__(self, pinecone_api_key: str):
+    def __init__(self):
         super().__init__()
-        self.pinecone_api_key = pinecone_api_key
+        self.pinecone_api_key = os.getenv("PINECONE_API_KEY")
+        self.embed_model = OpenAIEmbedding(api_key=os.getenv("OPENAI_API_KEY"))
+        self.pcvs = PineconeVectorStore(
+            index_name=PINECONE_INDEX,
+            namespace=PINECONE_INDEX_NAME_SPACE,
+            chunk_size=1024,
+            add_sparse_vector=False,
+            sparse_embedding_model=None,
+        )
+
+        self.pipeline = IngestionPipeline(
+            transformations=[
+                SemanticSplitterNodeParser(
+                    buffer_size=1,
+                    breakpoint_percentile_threshold=95,
+                    embed_model=self.embed_model,
+                ),
+                self.embed_model,
+            ],
+            vector_store=self.pcvs,
+        )
+
+        self.index = VectorStoreIndex.from_vector_store(
+            vector_store=self.pcvs,
+        )
+
+    def ping(self):
+        try:
+            resp = self.pcvs.client.describe_index_stats()
+            print("Ping successful:", resp)
+        except Exception as e:
+            print(f"Pinecone ping failed: {e}")
+            raise
 
     async def save(self, filename: str, buffer: bytes):
         document = Document(
             text=buffer.decode("utf-8"),
             metadata={"source_id": str(uuid.uuid4()), "source_name": filename},
         )
-        pcvs = PineconeVectorStore(
-            index_name="sources",
-            namespace="test",
-            chunk_size=1024,
-            add_sparse_vector=False,
-            sparse_embedding_model=None,
-        )
-        ctx = StorageContext.from_defaults(vector_store=pcvs)
-        index = VectorStoreIndex.from_documents([document], storage_context=ctx)
-        print("Upload to LlamaIndex complete")
+
+        # ctx = StorageContext.from_defaults(vector_store=self.pcvs)
+        # index = VectorStoreIndex.from_documents([document], storage_context=ctx)
+        nodes = self.pipeline.run(documents=[document], show_progress=True)
+
+        print(nodes)
+        print("Upload to vector_store complete")
         return {"message": "File uploaded successfully", "path": "psql and llamaIndex"}
 
-    async def remove(self, source_id: str):
-        raise NotImplementedError("Remove method not implemented")
+    async def adelete(self, source_id: str):
+        await self.index.adelete_ref_doc(ref_doc_id=source_id)
 
-    async def get(self, source_id: str):
-        raise NotImplementedError("Get method not implemented")
+    def get(self, source_id: str):
+
+        try:
+            nodes = self.pcvs.client.query(
+                namespace=PINECONE_INDEX_NAME_SPACE,
+                filter={"source_id": {"$eq": source_id}},
+                top_k=2,
+                include_metadata=True,  # Include metadata in the response.
+            )
+
+            return nodes
+
+        except Exception as e:
+            print(f"Error retrieving from Pinecone: {e}")
+            raise
 
     async def list(self):
         raise NotImplementedError("List method not implemented")
@@ -89,9 +139,12 @@ class PosgresStorage(StorageHandler):
     PostgreSQL storage handler for saving, removing, getting, and listing files.
     """
 
-    def __init__(self, database_url: str):
+    def __init__(self):
         super().__init__()
-        self.database_url = database_url
+        self.database_url = os.getenv("DATABASE_URL")
+
+    def ping(self):
+        raise NotImplementedError("Ping method not implemented")
 
     async def save(self, filename: str, buffer: bytes):
         source_id = str(uuid.uuid4())
@@ -120,7 +173,7 @@ class PosgresStorage(StorageHandler):
         finally:
             await conn.close()
 
-    async def remove(self, source_id: str):
+    async def adelete(self, source_id: str):
         raise NotImplementedError("Remove method not implemented")
 
     async def get(self, source_id: str):

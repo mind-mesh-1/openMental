@@ -45,3 +45,10 @@ The resulting HTML will nest the spans appropriately:
 
 - **POC**: Demonstrate the ability to parse documents into HTML with metadata storage.
 - **MVP**: Develop a functional UI with agent response capabilities and benchmark performance against existing solutions.
+
+
+
+
+### MISC:
+- static data: data that is manually uploaded by user
+- time series data: data that is either ingested, or can evolve over time, analysis will be prioritized on recent data

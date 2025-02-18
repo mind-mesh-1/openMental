@@ -39,3 +39,6 @@ select = ["F841"]
 # select = ["A", "B", "C", "D", "E", "F", "W"]
 # or extend the selection with:
 # extend-select = ["I"]
+
+[tool.pylint]
+disable = ["missing-function-docstring"]

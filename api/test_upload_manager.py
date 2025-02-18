@@ -2,9 +2,7 @@ import datetime
 import os
 import unittest
 from unittest.mock import AsyncMock, patch
-
 import pytest
-
 from storage_manager.util import upload_file
 from storage_manager import PosgresStorage
 
