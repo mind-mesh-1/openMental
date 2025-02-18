@@ -1,22 +1,21 @@
+from abc import ABC, abstractmethod
+import os
+import uuid
+
+from llama_index.core import Document, StorageContext, VectorStoreIndex
+from llama_index.vector_stores.pinecone import PineconeVectorStore
+import datetime
 import json
 import os
 import uuid
-from abc import ABC, abstractmethod
-import datetime
-import asyncpg
-from llama_index.vector_stores.pinecone import PineconeVectorStore
 
-from llama_index.core import (
-    Document,
-    StorageContext,
-    VectorStoreIndex,
-)
+import asyncpg
+
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 
-# TODO: for save, pydantic model for file type
 class StorageHandler(ABC):
     """
     Abstract base class for storage handlers.
@@ -49,7 +48,43 @@ class StorageHandler(ABC):
         pass
 
 
-class PostgreSQLStorageHandler(StorageHandler):
+class VectorStorage(StorageHandler):
+    """
+    LlamaIndex storage handler for saving, removing, getting, and listing files.
+    """
+
+    def __init__(self, pinecone_api_key: str):
+        super().__init__()
+        self.pinecone_api_key = pinecone_api_key
+
+    async def save(self, filename: str, buffer: bytes):
+        document = Document(
+            text=buffer.decode("utf-8"),
+            metadata={"source_id": str(uuid.uuid4()), "source_name": filename},
+        )
+        pcvs = PineconeVectorStore(
+            index_name="sources",
+            namespace="test",
+            chunk_size=1024,
+            add_sparse_vector=False,
+            sparse_embedding_model=None,
+        )
+        ctx = StorageContext.from_defaults(vector_store=pcvs)
+        index = VectorStoreIndex.from_documents([document], storage_context=ctx)
+        print("Upload to LlamaIndex complete")
+        return {"message": "File uploaded successfully", "path": "psql and llamaIndex"}
+
+    async def remove(self, source_id: str):
+        raise NotImplementedError("Remove method not implemented")
+
+    async def get(self, source_id: str):
+        raise NotImplementedError("Get method not implemented")
+
+    async def list(self):
+        raise NotImplementedError("List method not implemented")
+
+
+class PosgresStorage(StorageHandler):
     """
     PostgreSQL storage handler for saving, removing, getting, and listing files.
     """
@@ -138,52 +173,3 @@ class PostgreSQLStorageHandler(StorageHandler):
             raise e
         finally:
             await conn.close()
-
-
-class LlamaIndexStorageHandler(StorageHandler):
-    """
-    LlamaIndex storage handler for saving, removing, getting, and listing files.
-    """
-
-    def __init__(self, pinecone_api_key: str):
-        super().__init__()
-        self.pinecone_api_key = pinecone_api_key
-
-    async def save(self, filename: str, buffer: bytes):
-        document = Document(
-            text=buffer.decode("utf-8"),
-            metadata={"source_id": str(uuid.uuid4()), "source_name": filename},
-        )
-        pcvs = PineconeVectorStore(
-            index_name="sources", namespace="test", chunk_size=1024
-        )
-        ctx = StorageContext.from_defaults(vector_store=pcvs)
-        index = VectorStoreIndex.from_documents([document], storage_context=ctx)
-        print("Upload to LlamaIndex complete")
-        return {"message": "File uploaded successfully", "path": "psql and llamaIndex"}
-
-    async def remove(self, source_id: str):
-        raise NotImplementedError("Remove method not implemented")
-
-    async def get(self, source_id: str):
-        raise NotImplementedError("Get method not implemented")
-
-    async def list(self):
-        raise NotImplementedError("List method not implemented")
-
-
-async def upload_file(filename: str, buffer: bytes):
-    postgresql_handler = PostgreSQLStorageHandler(DATABASE_URL)
-    llamaindex_handler = LlamaIndexStorageHandler(PINECONE_API_KEY)
-
-    # postgresql_handler.set_next(llamaindex_handler)
-
-    psql_resp = await postgresql_handler.save(filename, buffer)
-    indexer_resp = await llamaindex_handler.save(filename, buffer)
-
-    return {
-        "message": "File uploaded successfully",
-        "path": "psql and llamaIndex",
-        "psql_resp": psql_resp,
-        "indexer_resp": indexer_resp,
-    }

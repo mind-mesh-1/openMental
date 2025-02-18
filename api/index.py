@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 import uuid
@@ -8,10 +7,9 @@ import asyncpg
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
-from pinecone.grpc import PineconeGRPC
 from pydantic import BaseModel
+from storage_manager import VectorStorage, PosgresStorage
 
-from upload_manager import PostgreSQLStorageHandler, LlamaIndexStorageHandler
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv()
@@ -21,8 +19,8 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 
-postgresql_handler = PostgreSQLStorageHandler(DATABASE_URL)
-llamaindex_handler = LlamaIndexStorageHandler(PINECONE_API_KEY)
+postgresql_handler = PosgresStorage(DATABASE_URL)
+vectorstorage_handler = VectorStorage(PINECONE_API_KEY)
 
 
 class RequestBody(BaseModel):
@@ -69,7 +67,7 @@ async def upload_file(request: Request):
             # postgresql_handler.set_next(llamaindex_handler)
 
             psql_resp = await postgresql_handler.save(filename, buffer)
-            indexer_resp = await llamaindex_handler.save(filename, buffer)
+            indexer_resp = await vectorstorage_handler.save(filename, buffer)
 
             return JSONResponse(
                 content={
@@ -92,6 +90,15 @@ async def upload_file(request: Request):
 
 @app.get("/api/py/source/{source_id}")
 async def get_sources(source_id: str):
+    """
+    Retrieve a source file by its ID.
+
+    Args:
+        source_id (str): The ID of the source file to retrieve.
+
+    Returns:
+        JSONResponse: A JSON response containing the retrieved file information or an error message.
+    """
 
     try:
         source_id = str(source_id)
