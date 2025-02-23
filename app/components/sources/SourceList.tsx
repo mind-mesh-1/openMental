@@ -66,7 +66,7 @@ const SourceList = () => {
         throw new Error('Failed to fetch source content');
       }
       const data = await response.json();
-      setContent(data.content);
+      setContent(data.item.content);
       setViewType('sourceDetail');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -97,7 +97,7 @@ const SourceList = () => {
         <div className="flex-none p-4">
           <div className="text-lg font-semibold mb-4">Sources</div>
 
-          <Uploady destination={{ url: UPLOAD_ENDPOINT }}>
+          <Uploady destination={{ url: `${UPLOAD_ENDPOINT}` }}>
             <UploadSource />
           </Uploady>
 
