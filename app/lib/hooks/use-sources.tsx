@@ -165,7 +165,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        const response = await fetch(SOURCE_URL);
+        const response = await fetch(`${SOURCE_URL}/list`);
         if (!response.ok) {
           throw new Error('Failed to fetch sources');
         }

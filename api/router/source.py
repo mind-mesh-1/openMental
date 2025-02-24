@@ -38,15 +38,18 @@ async def upload_file(request: Request):
         uploaded_at = datetime.datetime.utcnow()
         conn = await asyncpg.connect(DATABASE_URL)
 
-        psql_resp = await postgresql_handler.save(filename, buffer)
         indexer_resp = await vectorstorage_handler.save(filename, buffer)
+
+        psql_resp = await postgresql_handler.save(
+            filename, buffer, indexer_resp.doc_ref_id
+        )
 
         return JSONResponse(
             content={
                 "message": "File uploaded successfully",
                 "path": "psql and llamaIndex",
-                "psql_resp": psql_resp,
-                "indexer_resp": indexer_resp,
+                "psql_resp": psql_resp.model_dump(),
+                "indexer_resp": indexer_resp.model_dump(),
             },
             status_code=200,
         )
@@ -59,10 +62,11 @@ async def upload_file(request: Request):
 async def list_sources():
     try:
         items = await postgresql_handler.list()
+
         return JSONResponse(
             content={
                 "message": "Files retrieved successfully",
-                "items": items,
+                "sources": items,
             },
             status_code=200,
         )
@@ -111,6 +115,7 @@ async def delete_source(source_id: str):
 # @source_router.post("/analyze_sources")
 # def analyze_sources(request: AnalyzeSourcesRequest):
 #     source_ids = request.source_ids
+#     request.question
 #     request.question
 #     # Placeholder for analyzeSources logic
 #     return {"message": "analyzeSources executed"}
