@@ -1,0 +1,27 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "app/main.py",
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "15mb",
+                "runtime": "python3.10"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "app/main.py"
+        }
+    ],
+    "build": {
+        "env": {
+            "POETRY_VERSION": "1.7.1",
+            "POETRY_CACHE_DIR": "/tmp/poetry-cache",
+            "PIP_CACHE_DIR": "/tmp/pip-cache",
+            "PYTHONPATH": "/vercel/path0"
+        }
+    }
+}
