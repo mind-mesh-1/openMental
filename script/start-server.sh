@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Force update pip and install requirements
-pip3 install --upgrade pip
-pip3 install --no-cache-dir -r ../requirements.txt
+# Install requirements without forcing pip upgrade and using cache
+pip3 install -r ../requirements.txt
 
 # Start FastAPI server
 python3 -m uvicorn --chdir api index:app --reload
