@@ -1,3 +1,54 @@
+[tool.poetry]
+name = "notebook-llm-copilot"
+version = "0.1.0"
+description = "LLM Copilot for Jupyter Notebooks"
+authors = ["openhands <openhands@all-hands.dev>"]
+readme = "README.md"
+packages = [
+    { include = "app" },
+    { include = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.14"
+aiohappyeyeballs = "^2.4.6"
+aiohttp = "^3.11.12"
+aioitertools = "^0.12.0"
+aiosqlite = "^0.21.0"
+alembic = "^1.14.1"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.30.6"}
+python-multipart = "^0.0.20"
+python-dotenv = "^1.0.1"
+openai = "^1.63.0"
+llama-index = "^0.12.17"
+llama-index-llms-openai = "^0.3.19"
+pinecone = "^5.4.2"
+pandas = "^2.2.3"
+numpy = "^2.2.3"
+pillow = "^11.1.0"
+transformers = "^4.48.3"
+torch = "^2.6.0"
+sentence-transformers = "^3.4.1"
+beautifulsoup4 = "^4.13.3"
+httpx = "^0.28.1"
+pydantic = "^2.10.6"
+sqlalchemy = "^2.0.38"
+arize-phoenix = "^7.12.2"
+neo4j = "^5.28.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+ruff = "^0.9.6"
+pytest = "^8.3.4"
+coverage = "^7.6.12"
+flake8 = "^7.1.1"
+pylint = "^3.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
 # Maximum line length for Black. This should match the Ruff setting to avoid conflicts.
 line-length = 88
