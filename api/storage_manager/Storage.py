@@ -147,8 +147,7 @@ class VectorStorage(StorageHandler):
         )
         print(f"Deleted {source_id} from Pinecone")
 
-    def get(self, source_id: str):
-
+    async def get(self, source_id: str):
         try:
             nodes = self.pcvs.client.query(
                 namespace=PINECONE_INDEX_NAME_SPACE,

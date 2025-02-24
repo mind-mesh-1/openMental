@@ -4,6 +4,7 @@ import sys
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from router.qa import qa_router
 from router.source import source_router
 
 
@@ -21,6 +22,7 @@ app.add_middleware(
 )
 
 app.include_router(source_router, prefix="/api/py")
+app.include_router(qa_router, prefix="/api/py")
 
 
 if __name__ == "__main__":
