@@ -13,7 +13,7 @@ class QueryRequest(BaseModel):
 
 
 class AnalyzeSourcesRequest(BaseModel):
-    source_ids: List[str]
+    sourceIds: List[str]
     question: str
 
 

@@ -17,51 +17,53 @@ const runtime = new CopilotRuntime({
 
   actions: () => {
     return [
-      // {
-      //   name: 'analyzeSources',
-      //   description:
-      //     'Analyze active sources based on user questions, and includes number of citations',
-      //   parameters: [
-      //     {
-      //       name: 'source_ids',
-      //       type: 'string',
-      //       description: 'The ids of the source to analyze',
-      //       required: true,
-      //     },
-      //     {
-      //       name: 'question',
-      //       type: 'string',
-      //       description: 'The question to ask the LLM on the source',
-      //       required: true,
-      //     },
-      //   ],
-      //
-      //   handler: async ({ source_ids, question }) => {
-      //     console.log(
-      //       'COPILOT RUNTIME',
-      //       'analyzeSources',
-      //       source_ids,
-      //       question
-      //     );
-      //
-      //     const sourceIdsArray = source_ids.split(',');
-      //
-      //     const idx = new KnowledgeIndex('sources');
-      //
-      //     const engineResponse = await idx.queryDocuments(
-      //       sourceIdsArray,
-      //       question
-      //     );
-      //
-      //     console.log(
-      //       engineResponse.metadata,
-      //       engineResponse.sourceNodes?.length
-      //     );
-      //     console.log('response', engineResponse);
-      //     return engineResponse;
-      //   },
-      // },
-      //
+      {
+        name: 'analyzeSources',
+        description:
+          'Analyze active sources based on user questions, and includes number of citations',
+        parameters: [
+          {
+            name: 'source_ids',
+            type: 'string',
+            description: 'The ids of the source to analyze',
+            required: true,
+          },
+          {
+            name: 'question',
+            type: 'string',
+            description: 'The question to ask the LLM on the source',
+            required: true,
+          },
+        ],
+
+        handler: async ({ source_ids, question }) => {
+          console.log(
+            'COPILOT RUNTIME',
+            'analyzeSources',
+            source_ids,
+            question
+          );
+
+          return {};
+
+          // const sourceIdsArray = source_ids.split(',');
+          //
+          // const idx = new KnowledgeIndex('sources');
+          //
+          // const engineResponse = await idx.queryDocuments(
+          //   sourceIdsArray,
+          //   question
+          // );
+          //
+          // console.log(
+          //   engineResponse.metadata,
+          //   engineResponse.sourceNodes?.length
+          // );
+          // console.log('response', engineResponse);
+          // return engineResponse;
+        },
+      },
+
       // {
       //   name: 'summarizeSource',
       //   description:

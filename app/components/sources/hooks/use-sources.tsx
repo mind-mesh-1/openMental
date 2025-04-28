@@ -2,19 +2,15 @@
 
 import React, { useEffect } from 'react';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
-import { renderCitations } from '@/components/Citation';
 import { useAuditAction } from '@/lib/hooks/use-audit';
-import { ShortCitationType } from '@/app/api/basic/type';
+import { SourceItem, SourceListResponse } from '@/types';
+import { renderCitations } from '@/components/Citation';
 
 const SOURCE_URL = process.env.NEXT_PUBLIC_SOURCE_URL as string;
 const QA_URL = process.env.NEXT_PUBLIC_QA_URL as string;
 
-type Source = {
-  id: string;
-  name: string;
-  fileType: string;
+type Source = SourceItem & {
   isActive: boolean;
-  citations?: ShortCitationType[];
 };
 
 type SourceContextType = {
@@ -35,7 +31,7 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   const { logAction } = useAuditAction();
   const uploadSource = async () => {
     try {
-      const response = await fetch(SOURCE_URL);
+      const response = await fetch(`${SOURCE_URL}/list`);
       if (!response.ok) {
         throw new Error('Failed to fetch sources');
       }
@@ -72,13 +68,13 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
   useCopilotAction({
     name: 'analyzeActiveSources',
     available: 'enabled',
-    description: 'answer question directly based on active sources',
+    description: 'answer question directly based on active sources selected',
     followUp: false,
     parameters: [
       {
         name: 'question',
         type: 'string',
-        description: 'The question to ask the LLM on the source',
+        description: 'the question to be asked based on the active sources',
         required: true,
       },
     ],
@@ -108,9 +104,14 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
       if (status === 'executing' || status === 'inProgress') {
         return 'loading';
       } else if (status === 'complete') {
-        return renderCitations(result.citations);
+        return (
+          <>
+            {result.response}
+            {renderCitations(result.citations)}
+          </>
+        );
       } else {
-        return <div className="text-red-500">No meeting found</div>;
+        return <div className="text-red-500">No meseting found</div>;
       }
     },
   });
@@ -144,33 +145,16 @@ const SourcesProvider = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  //
-  // useCopilotAction({
-  //   name: 'summarizeSource',
-  //   available: 'remote',
-  //   description: 'summarize the active source, include details of citations',
-  //   parameters: [
-  //     {
-  //       name: 'source_id',
-  //       type: 'string',
-  //       description: 'The id of the source to summarize',
-  //       required: true,
-  //     },
-  //   ],
-  //   handler: ({ source_id }) => {
-  //     console.log('summarizing source', source_id);
-  //   },
-  // });
-
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        const response = await fetch(SOURCE_URL);
+        const response = await fetch(`${SOURCE_URL}/list`);
         if (!response.ok) {
           throw new Error('Failed to fetch sources');
         }
-        const data = await response.json();
-        setSourcesState(data.sources);
+        const data = (await response.json()) as SourceListResponse;
+        console.log('fetched sources', data);
+        setSourcesState(data.items);
       } catch (error) {
         console.error('Error fetching sources:', error);
       }

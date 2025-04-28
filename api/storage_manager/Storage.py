@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import os
 import uuid
+from typing import List
+from llama_index.core.vector_stores.types import VectorStoreQuery
 
 from llama_index.core import Document, StorageContext, VectorStoreIndex
 from llama_index.core.ingestion import IngestionPipeline
@@ -130,6 +132,11 @@ class VectorStorage(StorageHandler):
             print(f"Error retrieving from Pinecone: {e}")
             raise
 
+    def get_nodes(self, node_ids: List[str]):
+        query = VectorStoreQuery(node_ids = node_ids)
+        result = self.pcvs.query(query)
+        return result
+
     async def list(self):
         raise NotImplementedError("List method not implemented")
 
@@ -193,6 +200,7 @@ class PosgresStorage(StorageHandler):
                     "size": row["size"],
                     "uploaded_at": row["uploaded_at"].isoformat(),
                     "metadata": json.loads(row["metadata"]),
+                    "text": row["buffer"].decode("utf-8"),  # Convert bytes to text
                 }
             else:
                 return None

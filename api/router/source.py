@@ -1,30 +1,31 @@
+# Standard library imports
 import os
 import sys
 import uuid
 import datetime
+
+# Third-party imports
 import asyncpg
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, APIRouter
 from fastapi.responses import JSONResponse
 
-
-from fastapi import APIRouter
-
-from api.models import AnalyzeSourcesRequest
+# Local application imports
+from api.agents.CitationAgent import citationEngine
+from api.models.models import AnalyzeSourcesRequest
 from api.storage_manager import PosgresStorage, VectorStorage
 
+# Load environment variables
 load_dotenv()
 
+# Router and storage initialization
 source_router = APIRouter()
-
 DATABASE_URL = os.getenv("DATABASE_URL")
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-
-
 postgresql_handler = PosgresStorage()
 vectorstorage_handler = VectorStorage()
 
-
+# File upload and management routes
 @source_router.post("/source/upload")
 async def upload_file(request: Request):
     try:
@@ -32,11 +33,6 @@ async def upload_file(request: Request):
         filename = form["fileName"]
         file = form["file"]
         buffer = await file.read()
-        source_id = str(uuid.uuid4())
-        content_type = "text/plain"
-        size = len(buffer)
-        uploaded_at = datetime.datetime.utcnow()
-        conn = await asyncpg.connect(DATABASE_URL)
 
         psql_resp = await postgresql_handler.save(filename, buffer)
         indexer_resp = await vectorstorage_handler.save(filename, buffer)
@@ -51,37 +47,38 @@ async def upload_file(request: Request):
             status_code=200,
         )
     except Exception as e:
-        print(f"Error saving to database: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=400)
-
 
 @source_router.get("/source/list")
 async def list_sources():
     try:
         items = await postgresql_handler.list()
         return JSONResponse(
-            content={
-                "message": "Files retrieved successfully",
-                "items": items,
-            },
+            content={"message": "Files retrieved successfully", "items": items},
+            status_code=200,
+        )
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+
+@source_router.get("/source/{source_id}")
+async def get_sources(source_id: str):
+    try:
+        item = await postgresql_handler.get(str(source_id))
+        return JSONResponse(
+            content={"message": "File retrieved successfully", **item},
             status_code=200,
         )
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
 
 
-@source_router.get("/source/{source_id}")
-async def get_sources(source_id: str):
+@source_router.get("/source/citation/{citation_id}")
+async def get_citation(citation_id: str):
     try:
-        source_id = str(source_id)
-        item = await postgresql_handler.get(source_id)
-        print(item)
+        print(f"Retrieving citation with ID: {citation_id}")
+        nodes = await vectorstorage_handler.get_nodes([citation_id])
         return JSONResponse(
-            content={
-                "message": "File retrieved successfully",
-                "source_id": str(source_id),
-                "item": item,
-            },
+            content={"message": "chunk retrieved successfully", **nodes},
             status_code=200,
         )
     except Exception as e:
@@ -100,37 +97,31 @@ async def delete_source(source_id: str):
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
 
+# Question answering route
+@source_router.post("/source/qa")
+async def analyze_sources(request: AnalyzeSourcesRequest):
+    try:
+        engine_result = await citationEngine.run(
+            query=request.question,
+            index=vectorstorage_handler.index,
+            source_ids=request.sourceIds
+        )
 
-# @source_router.get("/helloFastApi")
-# def hello_fast_api():
-#     openai_apikey = os.getenv("OPENAI_API_KEY")
-#     print(f"openai_apikey: {openai_apikey}")
-#     return {"message": "Hello from FastAPI"}
-#
-#
-# @source_router.post("/analyze_sources")
-# def analyze_sources(request: AnalyzeSourcesRequest):
-#     source_ids = request.source_ids
-#     request.question
-#     # Placeholder for analyzeSources logic
-#     return {"message": "analyzeSources executed"}
+        citations = [{
+            "source_id": node.metadata["doc_ref_id"],
+            "source_name": node.metadata["source_name"],
+            "citation_id": node.id_,
+            "score": node.score,
+            "text": node.text,
+        } for node in engine_result.source_nodes]
 
-
-# @app.post("/api/py/chat")
-# def hello_fast_api(request: QueryRequest):
-#     query = request.query
-#
-#     index_reader = IndexReader("sources")
-#     print(query)
-#     chat_engine = index_reader.load_vector_index().morph_as_chat_engine()
-#
-#     response = chat_engine.chat(query=query, streaming=False)
-#
-#     print(response)
-#
-#     # async def stream_response():
-#     #     async for token in streaming_response.response_gen:
-#     #         print(token)
-#     #         yield token
-#
-#     return response.response
+        return JSONResponse(
+            content={
+                "message": "query_executed_successfully",
+                "response": engine_result.response,
+                "citations": citations,
+            },
+            status_code=200,
+        )
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)

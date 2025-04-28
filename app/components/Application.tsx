@@ -1,6 +1,6 @@
 // components/Application.tsx
 import React, { useState } from 'react';
-import { SourcesProvider } from '@/lib/hooks/use-sources';
+import { SourcesProvider } from '@/components/sources/hooks/use-sources';
 import { Sources } from '@/components/sources';
 import { CopilotChat } from '@copilotkit/react-ui';
 import { TasksProvider } from '@/lib/hooks/use-tasks';

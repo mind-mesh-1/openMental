@@ -1,5 +1,6 @@
 import os
 import sys
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI
 
@@ -12,7 +13,14 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 
-
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 app.include_router(source_router, prefix="/api/py")
 
 
