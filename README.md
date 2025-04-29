@@ -1,54 +1,47 @@
-# Project Title
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jzhao62_notebook-llm-copilot&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jzhao62_notebook-llm-copilot)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=jzhao62_notebook-llm-copilot&metric=bugs)](https://sonarcloud.io/summary/new_code?id=jzhao62_notebook-llm-copilot)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=jzhao62_notebook-llm-copilot&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=jzhao62_notebook-llm-copilot)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jzhao62_notebook-llm-copilot&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jzhao62_notebook-llm-copilot)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=jzhao62_notebook-llm-copilot&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=jzhao62_notebook-llm-copilot)
+
+## Prerequisites
+
+- Python 3.12
+- Node.js 18+
+- PostgreSQL database API key
+- Pinecone account API key
+- OpenAI API key
 
 
-## Overview
 
-This project aims to parse documents into HTML format with proper attributes, storing these as metadata in llamaIndex for back-referencing.
 
-## Milestones
 
-### Milestone 1: HTML Parsing and Metadata Storage
+# env variables
+put a .env in your root directory 
+```
+NEXT_PUBLIC_COPILOT_RUNTIME_ENDPOINT=api/copilotkit
+NEXT_PUBLIC_QA_URL=http://localhost:8000/api/py/source/qa
+NEXT_PUBLIC_SOURCE_URL=http://localhost:8000/api/py/source
+NEXT_PUBLIC_UPLOAD_ENDPOINT=http://localhost:8000/api/py/source/upload
 
-- **Event Creation**: For each chunk, two events are generated: one for the start (opening tag) and one for the end (closing tag).
-- **Event Sorting**: All events are sorted by their character position in the full text. When events share the same position, start events are prioritized over end events.
-- **HTML Construction**: The code iterates over the full text and inserts the appropriate HTML tags at each event point.
-  - When a start event is encountered, an opening `<span>` with `data-index` is inserted.
-  - When an end event is reached, a closing `</span>` is inserted.
-
-#### Resulting HTML Example
-
-The final HTML string shows nested `<span>` elements for overlapping chunks. For example, if:
-- Chunk 1 covers index 0–56,
-- Chunk 2 covers index 40–100, and
-- Chunk 3 covers index 90–140,
-
-The resulting HTML will nest the spans appropriately:
-
-```html
-<span class="highlight" data-index="1">Lorem ipsum dolor sit amet, consectetur <span class="highlight" data-index="2">adipiscing elit. </span>Sed do eiusmod tempor incididunt <span class="highlight" data-index="3">ut labore</span> et dolore magna aliqua. Ut enim ad</span> minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+PINECONE_API_KEY=pcskxx
+DATABASE_URL=postgresqlxxx
+OPENAI_API_KEY=skxxx
 ```
 
-### Milestone 2: Agent Response Mockup and UI Interactions
 
-- Mock up agent response and brainstorm on intuitive canvas UI interactions with CopilotKit.
-
-### Milestone 3: Benchmarking
-
-- Benchmark against Google LLM using different RAG strategies (hybrid search, knowledge graph, agent synthesis).
-
-## POC and MVP
-
-- **POC**: Demonstrate the ability to parse documents into HTML with metadata storage.
-- **MVP**: Develop a functional UI with agent response capabilities and benchmark performance against existing solutions.
+# run nextJS client side
+```
+pnpm install
+next dev
+```
+default running on localhost:3000
 
 
+# run fast api backend 
+- server entry: api/main.py
+```
+python 3.12
 
+create a venv
+pip install -r requirements.txt
+python -m uvicorn api.main:app --reload 
+```
 
-### MISC:
-- static data: data that is manually uploaded by user
-- time series data: data that is either ingested, or can evolve over time, analysis will be prioritized on recent data
+default running on localhost:8000
+![image](https://github.com/user-attachments/assets/f95c05a1-43c8-4b0f-a969-edcb5fb7475e)
